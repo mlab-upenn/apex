@@ -1,9 +1,8 @@
 apex_public
 ===========
 
-APEX 
-In order to use the files in this repository, first download the appropriate distribution of UPPAAL...
 
+In order to use the files in this repository, first download the appropriate distribution of UPPAAL...
 Windows: 
 
 http://www.it.uu.se/research/group/darts/uppaal/download/registration.php?id=0&subid=0
