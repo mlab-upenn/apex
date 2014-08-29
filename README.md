@@ -53,9 +53,9 @@ A red circle on the right hand side of the listbox indicates that the property h
 Properties to be checked are written as queries. It is beyond the scope of this document to discuss the general syntax. Please see the UPPAAL documentation for more information. The saftey properties which are specified in these particular models are as follows:
 
 - The target vehicle shall always travel at a rate less than or equal to the speed limit
-
-- The target vehicle shall always finish the plan
-- as
+- The target vehicle shall always eventually finish the plan
+- The target vehicle shall always avoid colliding with other vehicles
+- The target vehicle shall always stop at a red light if it hasn't yet passed its location.
 
 
 
