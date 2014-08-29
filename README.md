@@ -21,7 +21,25 @@ Japanese: http://www.it.uu.se/research/group/darts/uppaal/tutorial-jp.pdf
 
 3.)
 
-A youtube screencast of the use of UPPAAL in the context of these models may be found here:
+After downloading and unzipping UPPAAL, open the containing folder. Double click on the file uppaal.jar. This will open up the graphical user interface through which we may interact with our UPPAAL models.
+
+4.) 
+Click on the file menu-> Open System navigate to the folder containing the models in this repository and double click on the appropriate model ie ex2.xml
+
+5.)
+You are now looking at the graphical user interface for the UPPAAL editor. Using the editor pane on the lefhand side of the window one is able to select between different actors in our model. In this model the following actors are defined:
+
+Traffic Light: "Light"
+
+System Clock: "SystemClock"
+
+Target Vehicle Road Netowrk: "TargetVehicle"
+
+Target Vehicle Planning Controller: "TargetController"
+
+Road network for the  other vehicle in the simulation: "EnvVehicle"
+
+
 
 
 
