@@ -36,7 +36,26 @@ Target Vehicle Planning Controller: "TargetController"
 
 Road network for the  other vehicle in the simulation: "EnvVehicle"
 
+6.)
+Clicking on the simulator tab opens up a new interface which shows all the actors which have been instantiated. One can click through steps of the simulation using the next button. A simulation trace is created as one clicks through the steps. There are also separate panes which contain a list of state variables and a sequence diagram.
 
+7.)
+Clicking on the verifier tab allows one to formally prove the systems safety. Here the overview listbox contains the properties to be verified and their current status:
+
+A green circle on the right hand side of the listbox indicates that the property has been verified
+
+A grey/black circle on the right hand side of the listbox indicates that the property has not been tested
+
+A red circle on the right hand side of the listbox indicates that the property has failed. 
+
+
+8.)
+Properties to be checked are written as queries. It is beyond the scope of this document to discuss the general syntax. Please see the UPPAAL documentation for more information. The saftey properties which are specified in these particular models are as follows:
+
+- The target vehicle shall always travel at a rate less than or equal to the speed limit
+
+- The target vehicle shall always finish the plan
+-as
 
 
 
