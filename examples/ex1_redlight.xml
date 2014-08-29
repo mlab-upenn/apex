@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?><!DOCTYPE nta PUBLIC '-//Uppaal Team//DTD Flat System 1.1//EN' 'http://www.it.uu.se/research/group/darts/uppaal/flat-1_1.dtd'><nta><declaration>// Place global declarations here.
+// Distance is measured in 0.1m
+
+// Define the maximum deceleration (minimum acceleration) as 4 m/s^2
+const int MIN_ACCEL = -40;
+
+// Define the maximum acceleration as 3 m/s^2
+const int MAX_ACCEL = 30;
+
+// The speed limit on the road segement in 12 m/s
+const int SPEEDLIMIT = 120;
+
+// The intersection has a length of 15 meters
+const int IntersectionLength = 150;
+
+// ticktock is the system clock which updates the actors states
+broadcast chan ticktock;
+// ticktock1 always occurs after ticktock and allows controllers to make decisions based on updated states
+broadcast chan ticktock1;
+
+// Define a type which represents a vehicle. The position of the vehicle (x), the velocity (v), the acceleration (a), 
+// and the current segment are the elements of such a structure
+typedef struct {
+	int x;
+	int v;
+	int[MIN_ACCEL,MAX_ACCEL] a;
+	int segment;  // the current segment the vehicle is in
+} IVehicle;
+
+// Initialize the "target vehicle" of type IVehicle.
+IVehicle target = {x:0, v:0, a:0, segment:0};
+
+// Initialize the "environment vehicle" of type IVehicle.
+IVehicle env_veh = {x:140, v:0, a:0, segment:0};
+
+// Create a type for light status which communicates to other actors whether the light is green, yellow or red.
+typedef int[0,2] LightStatus;  //0:green; 1: yellow; 2: red
+
+// Put light status type status in a structure for traffic lights.
+typedef struct {
+	LightStatus status;
+} ITrafficLight;
+
+// Create an instance of the ITrafficLight structure known as light1.
+ITrafficLight light1;
+
+// Set the position of light1. TO DO: move position in the ITrafficLight Structure/Type?
+const int light1pos = 2000;  // position of traffic light on the segment
+
+// Return the observed status of traffic light
+// -1 if unknown (too far &gt; 40m or already passed)
+int lightSensor() {
+	if (target.segment == 0 &amp;&amp; target.x &lt;= light1pos &amp;&amp; (light1pos - target.x) &lt;= 400)
+		return light1.status;
+	else
+		return -1;
+}
+
+// Return distance to the traffic light
+// -1 if unknown (too far &gt; 60m, already passed)
+int distSensor() {
+	int dist = light1pos - target.x;
+	if (target.segment == 0 &amp;&amp; dist &gt;= 0 &amp;&amp; dist &lt;= 600)
+		return dist;
+	else
+		return -1;
+}
+
+// Return the observed status of the other vehicle
+//-1 if unknown (too far or behind). Otherwise return distance.
+int carSensor(){
+	int carDist=env_veh.x-target.x;
+	return carDist;
+}
+
+// Test for the minimum between integer a and integer b
+int min(int a, int b) {
+  return (a &lt; b)?a:b;
+}
+
+int toDesiredSpeed(int desiredSpeed) {
+  if (desiredSpeed &gt;= target.v)
+    return min(desiredSpeed - target.v, MAX_ACCEL);
+  else
+    return -min(target.v - desiredSpeed, -MIN_ACCEL);
+}
+
+
+// the control algorithm
+// We assume that when the car can detect the light status, it can also measure the distance
+// When close to the traffic light:
+//   v should be between (YELLOWDUR-sqrt(Delta))*(-MIN_ACCEL) and YELLOWDUR*(-MIN_ACCEL)
+//   where Delta = YELLOWDUR^2 - 2*IntersectionLength/(-MIN_ACCEL)
+// To stop with v = 0 at red light =&gt; a = -v^2/(2*d)
+
+int stopCar(int dist2light) {
+  if (dist2light &gt; 0)
+    return -min((target.v*target.v)/(2*dist2light)+5, -MIN_ACCEL);
+  else
+    return -min(target.v, -MIN_ACCEL);
+}</declaration><template><name>Light</name><parameter>ITrafficLight &amp;light</parameter><declaration>int c;
+const int GREENDUR = 15;
+const int YELLOWDUR = 3;
+const int REDDUR = 15;</declaration><location id="id0" x="152" y="184"><name x="144" y="200">red</name></location><location id="id1" x="400" y="56"><name x="390" y="26">yellow</name></location><location id="id2" x="184" y="-128"><name x="128" y="-144">green</name></location><location id="id3" x="-16" y="8"><urgent/></location><location id="id4" x="-192" y="8"><committed/></location><init ref="id4"/><transition><source ref="id0"/><target ref="id0"/><label kind="guard" x="92" y="154">c&lt;=REDDUR</label><label kind="synchronisation" x="92" y="169">ticktock?</label><label kind="assignment" x="92" y="184">c++</label><nail x="80" y="272"/><nail x="216" y="272"/></transition><transition><source ref="id1"/><target ref="id1"/><label kind="guard" x="340" y="26">c&lt;=YELLOWDUR</label><label kind="synchronisation" x="340" y="41">ticktock?</label><label kind="assignment" x="340" y="56">c++</label><nail x="504" y="-16"/><nail x="504" y="128"/></transition><transition><source ref="id2"/><target ref="id2"/><label kind="guard" x="144" y="-280">c&lt;=GREENDUR</label><label kind="synchronisation" x="144" y="-264">ticktock?</label><label kind="assignment" x="144" y="-248">c++</label><nail x="136" y="-224"/><nail x="272" y="-224"/></transition><transition><source ref="id0"/><target ref="id2"/><label kind="guard" x="104" y="42">c&gt;REDDUR</label><label kind="synchronisation" x="108" y="13">ticktock?</label><label kind="assignment" x="104" y="72">light.status=0,
+c=0</label></transition><transition><source ref="id1"/><target ref="id0"/><label kind="guard" x="256" y="136">c&gt;YELLOWDUR</label><label kind="synchronisation" x="288" y="112">ticktock?</label><label kind="assignment" x="256" y="166">light.status=2,
+c=0</label></transition><transition><source ref="id2"/><target ref="id1"/><label kind="guard" x="280" y="-110">c&gt;GREENDUR</label><label kind="synchronisation" x="280" y="-96">ticktock?</label><label kind="assignment" x="280" y="-80">light.status=1,
+c=0</label></transition><transition><source ref="id3"/><target ref="id0"/><label kind="guard" x="-80" y="56">light.status==2</label><label kind="assignment" x="-80" y="72">c=0</label></transition><transition><source ref="id3"/><target ref="id1"/><label kind="guard" x="32" y="-8">light.status==1</label><label kind="assignment" x="32" y="24">c=0</label></transition><transition><source ref="id3"/><target ref="id2"/><label kind="guard" x="-24" y="-80">light.status==0</label><label kind="assignment" x="-24" y="-64">c=0</label></transition><transition><source ref="id4"/><target ref="id3"/><label kind="select" x="-152" y="-37">l0:int[0,2]</label><label kind="assignment" x="-152" y="-16">light.status = l0</label></transition></template><template><name>SystemClock</name><declaration>clock c;</declaration><location id="id5" x="-32" y="-72"><urgent/></location><location id="id6" x="-168" y="-8"><label kind="invariant" x="-178" y="7">c &lt;= 1</label></location><init ref="id6"/><transition><source ref="id5"/><target ref="id6"/><label kind="synchronisation" x="-32" y="-16">ticktock1!</label><nail x="-48" y="24"/></transition><transition><source ref="id6"/><target ref="id5"/><label kind="guard" x="-152" y="-95">c == 1</label><label kind="synchronisation" x="-152" y="-80">ticktock!</label><label kind="assignment" x="-152" y="-65">c = 0</label></transition></template><template><name x="5" y="5">TargetVehicle</name><parameter>IVehicle &amp;car</parameter><declaration>// Place local declarations here.
+const int end = 2500;</declaration><location id="id7" x="96" y="-24"><name x="86" y="-54">finish</name></location><location id="id8" x="-488" y="-112"><urgent/></location><location id="id9" x="-208" y="-112"><name x="-224" y="-160">s0</name><label kind="invariant" x="-232" y="-144">car.x &lt;= end</label></location><init ref="id8"/><transition><source ref="id9"/><target ref="id7"/><label kind="guard" x="-72" y="-96">car.x + car.v + car.a/2 &gt;= end</label><label kind="synchronisation" x="-116" y="-83">ticktock?</label></transition><transition><source ref="id8"/><target ref="id9"/><label kind="select" x="-472" y="-152">x0:int[0,100],
+v0:int[40,100]</label><label kind="assignment" x="-472" y="-107">car.x = x0,
+car.v = v0,
+car.a = 0,
+car.segment = 0</label></transition><transition><source ref="id9"/><target ref="id9"/><label kind="synchronisation" x="-240" y="-24">ticktock?</label><label kind="assignment" x="-240" y="0">car.x+=(car.v+car.a/2),
+car.v+=car.a</label><nail x="-160" y="-24"/><nail x="-240" y="-24"/></transition></template><template><name>TargetController</name><declaration>int dist2light;
+int lightState;
+int dist2car;
+int desiredSpeed=0;</declaration><location id="id10" x="712" y="336"><urgent/></location><location id="id11" x="560" y="24"><urgent/></location><location id="id12" x="1016" y="0"><name x="1006" y="-30">stopping</name></location><location id="id13" x="128" y="336"><urgent/></location><location id="id14" x="136" y="-144"><urgent/></location><location id="id15" x="-294" y="-146"><name x="-360" y="-160">running</name></location><init ref="id15"/><transition><source ref="id14"/><target ref="id15"/><label kind="guard" x="144" y="-256">dist2car&lt;=60 &amp;&amp; dist2car&gt;=0</label><label kind="assignment" x="144" y="-240">target.a=stopCar(dist2car)</label><nail x="136" y="-256"/><nail x="-296" y="-256"/></transition><transition><source ref="id11"/><target ref="id10"/><label kind="guard" x="592" y="56">dist2light &gt;= 400</label><label kind="comments">target.v*target.v &lt;= -MIN_ACCEL*2*dist2light</label></transition><transition><source ref="id14"/><target ref="id10"/><label kind="guard" x="328" y="-168">dist2light &gt;= 0 &amp;&amp; lightState==2</label><nail x="712" y="-152"/></transition><transition><source ref="id11"/><target ref="id13"/><label kind="guard" x="352" y="168">dist2light &lt; 400</label><label kind="assignment" x="352" y="198">desiredSpeed=SPEEDLIMIT</label><label kind="comments">target.v*target.v &gt; -MIN_ACCEL*2*dist2light</label></transition><transition><source ref="id10"/><target ref="id13"/><label kind="guard" x="264" y="296">lightState&lt;=0</label><label kind="assignment" x="264" y="310">desiredSpeed=SPEEDLIMIT</label></transition><transition><source ref="id10"/><target ref="id12"/><label kind="guard" x="952" y="240">lightState&gt;0</label><label kind="assignment" x="952" y="256">target.a = stopCar(dist2light)</label><nail x="1096" y="184"/></transition><transition><source ref="id12"/><target ref="id10"/><label kind="synchronisation" x="784" y="32">ticktock1?</label><label kind="assignment" x="784" y="47">dist2light = distSensor(),
+lightState = lightSensor()</label></transition><transition><source ref="id14"/><target ref="id11"/><label kind="guard" x="224" y="-120">dist2light &gt;= 0 &amp;&amp; lightState==1 &amp;&amp; (dist2car&gt;60 || dist2car&lt;0)</label></transition><transition><source ref="id14"/><target ref="id13"/><label kind="guard" x="160" y="8">dist2light &gt;= 0 &amp;&amp; lightState==0 &amp;&amp; (dist2car&gt;60 || dist2car&lt;0)</label><label kind="assignment" x="160" y="24">desiredSpeed = min(100, SPEEDLIMIT)</label><nail x="424" y="32"/></transition><transition><source ref="id13"/><target ref="id15"/><label kind="assignment" x="-248" y="312">target.a = toDesiredSpeed(desiredSpeed)</label><nail x="-296" y="336"/></transition><transition><source ref="id14"/><target ref="id13"/><label kind="guard" x="-240" y="-112">(dist2light &lt; 0 || lightState &lt; 0)
+&amp;&amp; (dist2car&gt;60 || dist2car&lt;0)</label><label kind="assignment" x="-240" y="-80">desiredSpeed = SPEEDLIMIT</label><nail x="-240" y="16"/></transition><transition><source ref="id15"/><target ref="id14"/><label kind="synchronisation" x="-208" y="-207">ticktock1?</label><label kind="assignment" x="-208" y="-192">dist2light = distSensor(),
+lightState = lightSensor(),
+dist2car = carSensor()</label></transition></template><template><name x="5" y="5">EnvVehicle</name><parameter>IVehicle &amp;car</parameter><declaration>// Place local declarations here.
+const int end = 3000;</declaration><location id="id16" x="96" y="-24"><name x="86" y="-54">finish</name></location><location id="id17" x="-488" y="-112"><urgent/></location><location id="id18" x="-208" y="-112"><name x="-224" y="-160">s0</name><label kind="invariant" x="-232" y="-144">car.x &lt;= end</label></location><init ref="id17"/><transition><source ref="id18"/><target ref="id16"/><label kind="guard" x="-72" y="-96">car.x + car.v + car.a/2 &gt;= end</label><label kind="synchronisation" x="-116" y="-83">ticktock?</label></transition><transition><source ref="id17"/><target ref="id18"/><label kind="assignment" x="-472" y="-107">car.x = 140,
+car.v = 100,
+car.a = 0,
+car.segment = 0</label></transition><transition><source ref="id18"/><target ref="id18"/><label kind="synchronisation" x="-240" y="-24">ticktock?</label><label kind="assignment" x="-240" y="0">car.x+=(car.v+car.a/2),
+car.v+=car.a</label><nail x="-160" y="-24"/><nail x="-240" y="-24"/></transition></template><template><name>EnvController</name><declaration>int dist2light;
+int lightState;
+int desiredSpeed=0;</declaration><location id="id19" x="576" y="168"><urgent/></location><location id="id20" x="400" y="0"><urgent/></location><location id="id21" x="576" y="0"><name x="566" y="-30">stopping</name></location><location id="id22" x="144" y="168"><urgent/></location><location id="id23" x="144" y="-144"><urgent/></location><location id="id24" x="-72" y="-8"><name x="-82" y="-38">running</name></location><init ref="id24"/><transition><source ref="id20"/><target ref="id19"/><label kind="guard" x="328" y="48">dist2light &gt;= 400</label><label kind="comments">target.v*target.v &lt;= -MIN_ACCEL*2*dist2light</label></transition><transition><source ref="id23"/><target ref="id19"/><label kind="guard" x="328" y="-168">dist2light &gt;= 0 &amp;&amp; lightState==2</label><nail x="448" y="-144"/></transition><transition><source ref="id20"/><target ref="id22"/><label kind="guard" x="192" y="74">dist2light &lt; 400</label><label kind="assignment" x="192" y="104">desiredSpeed=SPEEDLIMIT</label><label kind="comments">target.v*target.v &gt; -MIN_ACCEL*2*dist2light</label></transition><transition><source ref="id19"/><target ref="id22"/><label kind="guard" x="264" y="176">lightState&lt;=0</label><label kind="assignment" x="264" y="206">desiredSpeed=SPEEDLIMIT</label></transition><transition><source ref="id19"/><target ref="id21"/><label kind="guard" x="624" y="32">lightState&gt;0</label><label kind="assignment" x="640" y="48">target.a = stopCar(dist2light)</label><nail x="648" y="80"/></transition><transition><source ref="id21"/><target ref="id19"/><label kind="synchronisation" x="400" y="88">ticktock1?</label><label kind="assignment" x="400" y="103">dist2light = distSensor(),
+lightState = lightSensor()</label></transition><transition><source ref="id23"/><target ref="id20"/><label kind="guard" x="224" y="-120">dist2light &gt;= 0 &amp;&amp; lightState==1</label></transition><transition><source ref="id23"/><target ref="id22"/><label kind="guard" x="152" y="-64">dist2light &gt;= 0 &amp;&amp; lightState==0</label><label kind="assignment" x="152" y="-48">desiredSpeed = min(100, SPEEDLIMIT)</label><nail x="240" y="0"/></transition><transition><source ref="id22"/><target ref="id24"/><label kind="assignment" x="-296" y="88">target.a = toDesiredSpeed(desiredSpeed)</label><nail x="-64" y="112"/></transition><transition><source ref="id23"/><target ref="id22"/><label kind="guard" x="24" y="24">dist2light &lt; 0 ||
+lightState &lt; 0</label><label kind="assignment" x="24" y="56">desiredSpeed = SPEEDLIMIT</label></transition><transition><source ref="id24"/><target ref="id23"/><label kind="synchronisation" x="-40" y="-119">ticktock1?</label><label kind="assignment" x="-40" y="-104">dist2light = distSensor(),
+lightState = lightSensor()</label></transition></template><system>// Place template instantiations here.
+VehicleObj = TargetVehicle(target);
+LightObj = Light(light1);
+CtrlObj = TargetController();
+EnvVehObj = EnvVehicle(env_veh);
+
+// List one or more processes to be composed into a system.
+system SystemClock, VehicleObj,EnvVehObj,LightObj, CtrlObj;</system></nta>
