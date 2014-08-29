@@ -55,7 +55,7 @@ Properties to be checked are written as queries. It is beyond the scope of this 
 - The target vehicle shall always travel at a rate less than or equal to the speed limit
 
 - The target vehicle shall always finish the plan
--as
+- as
 
 
 
