@@ -2,7 +2,6 @@ apex_public
 ===========
 
 1.)
-
 In order to use the files in this repository, first download the appropriate distribution of UPPAAL...
 
 Windows: http://www.it.uu.se/research/group/darts/uppaal/download/registration.php?id=0&subid=0
@@ -12,7 +11,6 @@ Mac: http://www.it.uu.se/research/group/darts/uppaal/download/registration.php?i
 More details can be found here: http://www.uppaal.org/
 
 2.)
-
 A short tutorial on the general use of UPPAAL is available at the following links...
 
 English: http://www.it.uu.se/research/group/darts/uppaal/small_tutorial.pdf
@@ -20,7 +18,6 @@ English: http://www.it.uu.se/research/group/darts/uppaal/small_tutorial.pdf
 Japanese: http://www.it.uu.se/research/group/darts/uppaal/tutorial-jp.pdf
 
 3.)
-
 After downloading and unzipping UPPAAL, open the containing folder. Double click on the file uppaal.jar. This will open up the graphical user interface through which we may interact with our UPPAAL models.
 
 4.) 
