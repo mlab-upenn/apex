@@ -24,6 +24,8 @@ After downloading and unzipping UPPAAL, open the containing folder. Double click
 4.) 
 Click on the file menu-> Open System navigate to the folder containing the models in this repository and double click on the appropriate model ie ex2.xml
 
+![alt tag](https://raw.github.com/mlab/apex_public/master/images/openmodel.png)
+
 5.)
 You are now looking at the graphical user interface for the UPPAAL editor. Using the editor pane on the lefhand side of the window one is able to select between different actors in our model. In this model the following actors are defined:
 
