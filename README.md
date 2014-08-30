@@ -1,5 +1,5 @@
-apex_public
-===========
+How to use this repository...
+
 
 1.)
 In order to use the files in this repository, first download the appropriate distribution of UPPAAL...
