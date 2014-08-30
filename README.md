@@ -8,7 +8,7 @@ In order to use the files in this repository, first download the appropriate dis
 - Mac: http://www.it.uu.se/research/group/darts/uppaal/download/registration.php?id=0&subid=2
 - More details can be found here: http://www.uppaal.org/
 
-![alt tag](https://raw.github.com/mlab/apex_public/master/images/downloadUppaal.png)
+![alt tag](https://raw.github.com/mlab/apex_public/master/images/downloadUppaal.PNG)
 
 2.)
 A short tutorial on the general use of UPPAAL is available at the following links...
