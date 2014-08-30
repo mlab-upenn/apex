@@ -35,6 +35,8 @@ You are now looking at the graphical user interface for the UPPAAL editor. Using
 - Target Vehicle Planning Controller: "TargetController"
 - Road network for the  other vehicle in the simulation: "EnvVehicle"
 
+![alt tag](https://raw.github.com/mlab/apex_public/master/images/uppaaleditor.png)
+
 6.)
 Clicking on the simulator tab opens up a new interface which shows all the actors which have been instantiated. One can click through steps of the simulation using the next button. A simulation trace is created as one clicks through the steps. There are also separate panes which contain a list of state variables and a sequence diagram.
 
