@@ -49,6 +49,7 @@ Clicking on the verifier tab allows one to formally prove the systems safety. He
 - A grey/black circle on the right hand side of the listbox indicates that the property has not been tested
 - A red circle on the right hand side of the listbox indicates that the property has failed. 
 
+![alt tag](https://raw.github.com/mlab/apex_public/master/images/uppaalverify.png)
 
 8.)
 Properties to be checked are written as queries. It is beyond the scope of this document to discuss the general syntax. Please see the UPPAAL documentation for more information. The saftey properties which are specified in these particular models are as follows:
