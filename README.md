@@ -17,6 +17,8 @@ A short tutorial on the general use of UPPAAL is available at the following link
 3.)
 After downloading and unzipping UPPAAL, open the containing folder. Double click on the file uppaal.jar. This will open up the graphical user interface through which we may interact with our UPPAAL models.
 
+![alt tag](https://raw.github.com/mlab/apex_public/master/images/openuppaal.png)
+
 4.) 
 Click on the file menu-> Open System navigate to the folder containing the models in this repository and double click on the appropriate model ie ex2.xml
 
