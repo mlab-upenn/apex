@@ -8,57 +8,60 @@ const int MAX_ACCEL = 30;
 const int SPEEDLIMIT = 120;
 
 // The intersection has a length of 15 meters
-const int IntersectionLength = 150;
+const int IntersectionLength = 1500;
 
 
 const int GREENDUR = 15;
 const int YELLOWDUR = 3;
 const int REDDUR = 15;
-global s:[0..3] init 0;
+//global s:[0..3] init 0;
 global x_env:[0..1000] init 100;
 global v_env:[0..120] init 40;
 global a_env:[-4..4] init 0;
 global lightpos:[0..2000] init 2000;
-global x_tar:[0..1000] init 20;
-global v_tar:[0..120] init 50;
-global a_tar:[-4..4] init 0;
+
 
 module light
 
 clk: [0..1000] init 0;
-
+s:[0..3] init 0;
 //[] s=0->0.3:(s'=1)+0.3:(s'=2)+0.4:(s'=3);
 // Actually giving them equal probability 0.33333
-[] s=0->(s'=1);
-[] s=0->(s'=2);
-[] s=0->(s'=3);
-[] s=1 & clk<=GREENDUR -> (s'=1)&(clk'=clk+1);
-[] s=1 & clk>GREENDUR  -> (s'=2)&(clk'=0);
-[] s=2 & clk<=YELLOWDUR-> (s'=2)&(clk'=clk+1);
-[] s=2 & clk>YELLOWDUR-> (s'=3)&(clk'=0);
-[] s=3 & clk<=REDDUR->(s'=3)&(clk'=clk+1);
-[] s=3 & clk>REDDUR->(s'=1)&(clk'=0);
+[tic] s=0->(s'=1);
+[tic] s=0->(s'=2);
+[tic] s=0->(s'=3);
+[tic] s=1 & clk<=GREENDUR -> (s'=1)&(clk'=clk+1);
+[tic] s=1 & clk>GREENDUR  -> (s'=2)&(clk'=0);
+[tic] s=2 & clk<=YELLOWDUR-> (s'=2)&(clk'=clk+1);
+[tic] s=2 & clk>YELLOWDUR-> (s'=3)&(clk'=0);
+[tic] s=3 & clk<=REDDUR->(s'=3)&(clk'=clk+1);
+[tic] s=3 & clk>REDDUR->(s'=1)&(clk'=0);
 endmodule
 
-module targetcar_dy
+//module targetcar_dy
 
-s_car:[0..3] init 1;
+//s_car:[0..3] init 1;
 
-[] true->(s'=1)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
+//[] true->(s_car'=1)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
 // initialize
 //
 //[] s=1
-endmodule
+//endmodule
 
 module targetcar_con
-[] true->(a_tar'=-4);
-[] true->(a_tar'=-3);
-[] true->(a_tar'=-2);
-[] true->(a_tar'=-1);
-[] true->(a_tar'=1);
-[] true->(a_tar'=2);
-[] true->(a_tar'=3);
-[] true->(a_tar'=4);
+
+ x_tar:[0..1000] init 20;
+ v_tar:[0..120] init 50;
+ a_tar:[-4..4] init 0;
+
+[tic] true->1:(a_tar'=-4)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
+[tic] true->1:(a_tar'=-3)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
+[tic] true->1:(a_tar'=-2)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
+[tic] true->1:(a_tar'=-1)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
+[tic] true->1:(a_tar'=1)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
+[tic] true->1:(a_tar'=2)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
+[tic] true->1:(a_tar'=3)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
+[tic] true->1:(a_tar'=4)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
 endmodule
 
 label "arrive"=x_tar>=IntersectionLength;
