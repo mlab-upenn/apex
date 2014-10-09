@@ -9,6 +9,8 @@ const int SPEEDLIMIT = 120;
 
 // The intersection has a length of 15 meters
 const int IntersectionLength = 150;
+
+
 const int GREENDUR = 15;
 const int YELLOWDUR = 3;
 const int REDDUR = 15;
@@ -38,11 +40,25 @@ clk: [0..1000] init 0;
 [] s=3 & clk>REDDUR->(s'=1)&(clk'=0);
 endmodule
 
-module targetcar
+module targetcar_dy
 
 s_car:[0..3] init 1;
+
+[] true->(s'=1)&(x_tar'=x_tar+v_tar+floor(a_tar/2))&(v_tar'=v_tar+a_tar);
 // initialize
 //
 //[] s=1
 endmodule
 
+module targetcar_con
+[] true->(a_tar'=-4);
+[] true->(a_tar'=-3);
+[] true->(a_tar'=-2);
+[] true->(a_tar'=-1);
+[] true->(a_tar'=1);
+[] true->(a_tar'=2);
+[] true->(a_tar'=3);
+[] true->(a_tar'=4);
+endmodule
+
+label "arrive"=x_tar>=IntersectionLength;
