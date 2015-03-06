@@ -9,10 +9,10 @@ To verify these properties, we must first decide on the appropriate formalism(s)
 and the corresponding formalism for describing the autonomous system under verificaiton.
 Secondly, we must decide on which tool to run to verify the property.
 In general, we may expect that different properties, and different levels of abstraction at which they are verified, will require (or be better verified) using different formalisms and tools. 
-For example, verifying a property of the continuous-time dynamics may be done using {\staliro},
-whereas verifying a property of the discrete mission planner may be best done using UPPAAL.
-This motivates the creation of a translator from our rich HCHA representation of the scenario instance to the different formalisms that are deemed useful. 
-For example, finite automata, timed automata, weighted timed automata,...etc.
+For example, verifying a property of the continuous-time dynamics may be done using {\staliro}~\cite{AnnapureddyLFS11tacas},
+whereas verifying a property of the discrete mission planner may be best done using UPPAAL \cite{BehrmannDLHPYH06qest}.
+This motivates the creation of a translator from our detailed HCHA representation of the scenario instance to the different formalisms that are deemed useful. 
+For example: timed automata, weighted timed automata, Ordinary Differential Equation (ODEs), impulsive systems,...etc.
 See Fig.~\ref{fig:toolbus}.
 
 \begin{figure}[tb]
@@ -22,17 +22,30 @@ See Fig.~\ref{fig:toolbus}.
 	\caption{The APEX tool bus.}
 \end{figure}
 
-\todo[inline]{put figure of tool bus}
+The representation of a scenario and its agents in some Intermediate Representation (IR) allows the translation into many other formalisms.
+The key requirement is that the IR must be at least as detailed as any target formalism.
+Formally, we say that a model $\Mc_1$ (in formalism $F_1$, e.g. HCHA) is at least as detailed as model $\Mc_2$ (in formalism $F_2$, e.g. timed automata) if the behavior of $\Mc_2$ contains the behavior of $\Mc_1$: 
+\[\behavior_{\Mc_1} \subset \behavior_{\Mc_2}\]
+This is the familiar notion of behavior inclusion, and it is one more reason for choosing HCHA as the IR:
+the most detailed analysis that can be made on the autonomous system is at the level of the continuous dynamics.
+These are captured in the HCHA. 
+Other aspects are also captured in the HCHA, as explained in Section \ref{HCHA}.
+These details can be abstracted when translating the HCHA to a timed automaton to perform verification using UPPAAL.
+On the other hand, had we chosen timed automata as our IR, we would not have been able to recover the true dynamics from the timed automaton's differential inclusions. This would preclude us from performing accurate reachability computations for example.
 
-The representation of a scenario and its agents as HCHA is rich enough to allow the translation in a traceable manner.
+\todo[inline]{a word on jhow to transfer verif results back to HCHA}
 
-Because the safety imperative is expressed by a set of logic formulae in different scenarios
-The HCHA formalism is rich, but not every property to be verified requires this level of detail.
-The key thing is that it is rich enough to be translated into simpler formalisms that have FV tools and can support the verification of properties of interest.
-The translation must be formally valid: if HCHA -> Timed automata, say, and TA |= property, then it must hold that HCHA $\models$ property.
+APEX includes a tool bus: once a combination of tools is decided on for a particular verification task, the IR is translated to the formats of these tools and transmitted to them.
 
-Therefore, tool bus.
+\subsection{Simulation model}
+\label{simulation model}
+Control engineers, who will be one of the main group of users of APEX, are mostly used to \emph{simulating} their designs under certain initial conditions and inputs from the environment to determine correctness. 
+Simulation is also a quick way to get a qualitiative idea of what the system does, and is used iteratively to improve the design.
+It is therefore important for APEX to provide a translation from the IR to a simulation tool, in addition to the translation to formal tools. 
+We chose to add the MathWorks' Simulink \copyright to the tool bus.
+Simulink is well-known to most engineers and has the advantage of a Graphical User Interface which can be leveraged as a design entry tool (see Section \ref{dsl}).
 
+Note that because the simulation model will not be subjected to formal verification, there is no need to establish behavioral inclusion between its behavior and the IR.
 
 
 \subsection{Scenario authoring tool and Domain-Specific Language}

@@ -19,6 +19,7 @@ For example, it is not known whether the car will encounter slow traffic on the 
 Moreover, it is clear that some scenarios, like traffic lights, will be encountered more than once, albeit with minor site-specific differences. 
 The key observation however is that the diversity of scenarios is, to a first order of approximation, finite. 
 That is, there is a recognizable, finite set of scenario types that is sufficient to describe most autonomous navigation missions.
+
 Formally, let $\Sc = \{s_0,s_1,\ldots,s_{N-1}\}$ be a set of scenarios. 
 E.g., $s_0 = $ Roundabout, $s_1 = $Lane change, $s_2 = $ PassOnTheLeft, etc. 
 (Each of these scenario types will be itself formalized in what follows).
@@ -63,8 +64,8 @@ E.g an instance of scenario $s_0$ (Roundabout) might have the agents
 & speedLimit(25mph)\} \subset I(\agentTypeSet)
 \end{eqnarray*}
 where $egoVehicle$ and $otherVehicle1$ are instances of type $\texttt{vehicle}$, 
-$rndAbout(3)$ is an instance of $\texttt{road}$ indicating a round-about with 3 entry points (which are also exit points),
-and $speedLimit(25mph)$ is an intance of $\texttt{trafficSignage}$ indicating a speed limit sign that reads 25mph.
+$rndAbout(n)$ is an instance of $\texttt{road}$ indicating a round-about with $n$ entry points (which are also exit points),
+and $speedLimit(Vmph)$ is an intance of $\texttt{trafficSignage}$ indicating a speed limit sign that reads $V$ mph.
 Another scenario instance has the agents
 \begin{eqnarray*}
 \agentInstanceSet = \{&EgoVehicle, OtherVehicle1, rndAbt(2), \\ 
@@ -72,7 +73,7 @@ Another scenario instance has the agents
 \end{eqnarray*}
 The set $\agentInstanceSet$ always includes the ego vehicle, i.e., the system whose safe behavior we want to verify.
 %
-\item $\behavior = \{\behavior_a \sut a \in \agentInstanceSet\}$ is a bounded-time behavior description for each of the agent instances in $\agentInstanceSet$.
+\item $\behavior = \{\behavior_a \sut a \in \agentInstanceSet \setminus egoVehicle\}$ is a bounded-time behavior description for each of the agent instances in $\agentInstanceSet$.
 \end{itemize}
 
 Describing the behavior $\behavior_a$ of an agent instance requires us to formally describe an agent. We do so in the next section using hierarcical communicating hybrid automata.
@@ -81,7 +82,8 @@ Describing the behavior $\behavior_a$ of an agent instance requires us to formal
 \label{safety}
 Absolute safety imperative -> more detailed behavior constraints that guarantee safety int eh scenario.
 
-\subsection{Hierarchical communicating hybrid automata}
+\subsection{Hierarchical communicating hybrid \\automata}
+\label{HCHA}
 Because autonomous systems are physical systems controlled by software, hybrid automata (HA) are a suitable formalism for modeling them.
 Because the complexity of autonomous systems is significant, they are typically designed at multiple levels of abstraction, 
 with different teams handling the design at different levels.
