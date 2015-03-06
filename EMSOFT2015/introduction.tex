@@ -1,0 +1,47 @@
+\section{Introduction}
+\label{introduction}
+
+The acceptance of autonomous systems in the economy and in society in a larger sense.
+
+Main concern: safety of the interaction between autonomous system and its environment (= other agents, and the physical environment)
+
+Air-tight guarantees are required, otherwise liability is on the car manufacturer => formal methods.
+
+Safety, to people, means the safety of people involved in the driving situation: car passengers, and people in its 'dorasical' environment (i.e. where the car can take action). 
+In all cases, don't cause harm to them. 
+This is then specialized to scenarios (e.g. don't run a red light) => study scenario safety.
+\footnote{Can we take the absolute safety mandates and automatically specialize them to scenarios? I.e. given the set of state trajectories of the car, automatically derive, from the scenario, some constraints that constrain the search for the subset of trajectories that end in harming someone in that particular scenario?}
+
+Need an end-to-end framework allowing designers and verifiers to model the scenarios, and formally verify them.
+
+
+Need a tool that implements this framework.
+
+The framework must: 
+\begin{itemize}
+\item allow the formal description of scenarios, to permit their formal verification
+\item allow the use of tried-and-true FV tools
+\item allow simulation of scenarios
+\item take into account the continuous dynamics of the car (somehow - doesn't mean everyone worries about them, but if they're abstracted away that abstraction must be verified as lossless under the scenarios)
+\item allow porting the FV results from models to implementations (HW in the loop and subsequent stages)
+\end{itemize}
+
+The tool must:
+\begin{itemize}
+	\item be usable by non-FV experts (control engineers, traffic engineers, others?)
+	\item allow push-button FV run (see first item)
+	\item present as fast a learning curve as possible (e.g. by leveraging existing familiar GUIs like Simulink's)
+\end{itemize}
+
+In this paper, we use autonomous vehicles as an example.
+
+\subsection{Related work}
+Work on autonomous navigation: DARPA urban challenge papers, controller synthesis papers.
+
+DSL: that paper by the french authors, others?
+
+Scenarios and agents: there has to be a tonne here...the papers referenced by Matt in the APEX preso
+
+Interaction between model checkers and other verif tools: CEGAR, matthias and CMU guy, spaceex.
+
+Other semi-formal verif: staliro, breach, apx bisimulations.

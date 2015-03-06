@@ -1,0 +1,7 @@
+\section{Verifying the safety of discrete maneuvers}
+\label{verifyingSafety}
+(Matt's class project)
+
+In this section, we illustrate the need to use two different formalisms to verify the safety of a discrete controller. 
+Namely, we demonstrate how reachability computations can be combined with model checking to verify that the control commands issued by a controller not only guarantee completing the scenario, but also can be implemented in a manner that avoids collisions between the ego and other vehicles.
+Such a use case is well-suited for APEX, since the IR can be translated to inputs to both the model checker (here, UPPAAL) and the reachability computation tool (here, dReach).

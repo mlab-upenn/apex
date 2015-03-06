@@ -1,0 +1,40 @@
+\section{Design entry and the tool bus}
+\label{designEntryAndToolBus}
+
+\subsection{The tool bus}
+\label{tool bus}
+One of our goals in APEX is to formally verify the safety of the autonomous system's operation in all scenario types.
+As we saw in Section \ref{safety}, the imperative to be safe is expressed by different logic properties in the different scenarios types.
+To verify these properties, we must first decide on the appropriate formalism(s) in whic to express them (e.g. LTL, CTL, or MTL?) 
+and the corresponding formalism for describing the autonomous system under verificaiton.
+Secondly, we must decide on which tool to run to verify the property.
+In general, we may expect that different properties, and different levels of abstraction at which they are verified, will require (or be better verified) using different formalisms and tools. 
+For example, verifying a property of the continuous-time dynamics may be done using {\staliro},
+whereas verifying a property of the discrete mission planner may be best done using UPPAAL.
+This motivates the creation of a translator from our rich HCHA representation of the scenario instance to the different formalisms that are deemed useful. 
+For example, finite automata, timed automata, weighted timed automata,...etc.
+See Fig.~\ref{fig:toolbus}.
+
+\begin{figure}[tb]
+	\centering
+		\includegraphics{figures/fly.eps}
+	\label{fig:toolbus}
+	\caption{The APEX tool bus.}
+\end{figure}
+
+\todo[inline]{put figure of tool bus}
+
+The representation of a scenario and its agents as HCHA is rich enough to allow the translation in a traceable manner.
+
+Because the safety imperative is expressed by a set of logic formulae in different scenarios
+The HCHA formalism is rich, but not every property to be verified requires this level of detail.
+The key thing is that it is rich enough to be translated into simpler formalisms that have FV tools and can support the verification of properties of interest.
+The translation must be formally valid: if HCHA -> Timed automata, say, and TA |= property, then it must hold that HCHA $\models$ property.
+
+Therefore, tool bus.
+
+
+
+\subsection{Scenario authoring tool and Domain-Specific Language}
+\label{dsl}
+How are the scenarios created? DSL and scenario authoring tool.
