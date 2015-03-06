@@ -10,7 +10,6 @@ Air-tight guarantees are required, otherwise liability is on the car manufacture
 Safety, to people, means the safety of people involved in the driving situation: car passengers, and people in its 'dorasical' environment (i.e. where the car can take action). 
 In all cases, don't cause harm to them. 
 This is then specialized to scenarios (e.g. don't run a red light) => study scenario safety.
-\footnote{Can we take the absolute safety mandates and automatically specialize them to scenarios? I.e. given the set of state trajectories of the car, automatically derive, from the scenario, some constraints that constrain the search for the subset of trajectories that end in harming someone in that particular scenario?}
 
 Need an end-to-end framework allowing designers and verifiers to model the scenarios, and formally verify them.
 
@@ -36,6 +35,7 @@ The tool must:
 In this paper, we use autonomous vehicles as an example.
 
 \subsection{Related work}
+\todo[inline]{Matt, please chime in}
 Work on autonomous navigation: DARPA urban challenge papers, controller synthesis papers.
 
 DSL: that paper by the french authors, others?
@@ -45,3 +45,8 @@ Scenarios and agents: there has to be a tonne here...the papers referenced by Ma
 Interaction between model checkers and other verif tools: CEGAR, matthias and CMU guy, spaceex.
 
 Other semi-formal verif: staliro, breach, apx bisimulations.
+
+\subsection{Notation}
+We denote the set of integers including 0 with $\Ne$. 
+Given a subset $S$ of the reals, $S^* = S \setminus \{0\}$ and $S_+ = S \cap [0,\infty)$,
+while $S_+^* = S cap (0,\infty)$.

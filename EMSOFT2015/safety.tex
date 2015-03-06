@@ -1,0 +1,25 @@
+\subsection{What is safety?}
+\label{safety}
+
+For people to feel comfortable interacting with potentially dangerous autonomous agents, like autonomous cars, it is imperative that they be confident that these systems are at least as safe as the human-operated systems they are replacing.
+In fact, for there to be an economic value behind the introduction of autonomous systems, they must, among other things, guarantee an increased level of safety relative to the current system. 
+Increased and more consistent efficiency and effectiveness at completing their tasks are other desiderata, which are outside the scope of this paper.
+
+In this section, we formalize the safety imperative: 
+that is, what it means for an autonomous system to be safe, in the context of autonomous vehicles.
+\todo[inline]{lit review on safety}
+The general (active) safety imperative is that the autonomous car must not take actions that directly endanger the car's passengers (including the driver) or people in the environment that is susceptible to its actions.
+We call this the `dorasical' environment, from the Greek $\delta \rho \acute{\alpha} \sigma \eta$ for action.
+\footnote{Other notions of safety, such as passive safety where the autonomous system must not endanger others via \emph{inaction}, or extensions of the safety imperative to not damaging property (and not just people) are not covered here. We note nonetheless that guaranteeing that the active safety imperative is obeyed contributes to guaranteeing these other notions are also obeyed.}
+
+For an autonomous vehicle, this safety requirement means not colliding with other agents in the environment (cars, pedestrians, and traffic signage), or entering unsafe regions of the environment, like opposing traffic lanes or obstacles.
+This holds regardless of the scenario type the ego vehicle is engaged in. 
+But specializing this imperative to a given scenario type allows us to break it down into more specific requirements which, when formally expressed, can facilitate the model checking task.
+Intuitively, by specifying certain ways in which safety can be violated, we guide the model checker towards finding those ways, in effect constraining the search space.
+\todo[inline]{cite XOR (formalize => prove)? (in that order)}
+These scenario-appropriate properties are then expressed in a formal logic like Linear Temporal Logic (LTL) \cite{Pnueli77sfcs} or Metric Temporal Logic (MTL) \cite{Koymans90}, and formally verified on the formal model of the scenario.
+To avoid confusing common terminology, we will call these \emph{safety-inducing properties}, because when we write them as logic formulae they don't take the form of what is usually referred to as a safety formula. 
+That is, they are not in the form $\always (x \notin \text{Unsafe set})$.
+But once they are satisfied, they guarantee, by construction, that the safety imperative is satisfied in this scenario.
+\todo[inline]{Future: Can we take the absolute safety mandates and automatically specialize them to scenarios? I.e. given the set of state trajectories of the car, automatically derive, from the scenario, some constraints that constrain the search for the subset of trajectories that end in harming someone in that particular scenario?}
+\todo[inline]{safety algebara?}

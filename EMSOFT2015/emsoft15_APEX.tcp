@@ -6,7 +6,7 @@ Version=4
 MainFile=emsoft15_APEX.tex
 UseBibTeX=1
 UseMakeIndex=0
-ActiveProfile=LaTeX ⇨ PS ⇨ PDF
+ActiveProfile=LaTeX ⇨ PDF
 ProjectLanguage=en
 ProjectDialect=US
 

@@ -5,19 +5,19 @@
 \label{tool bus}
 One of our goals in APEX is to formally verify the safety of the autonomous system's operation in all scenario types.
 As we saw in Section \ref{safety}, the imperative to be safe is expressed by different logic properties in the different scenarios types.
+For example, in a Crosswalk scenario, one safety-inducing property is ``Pedestrian in crosswalk $\implies$ car is stopped''.
 To verify these properties, we must first decide on the appropriate formalism(s) in whic to express them (e.g. LTL, CTL, or MTL?) 
-and the corresponding formalism for describing the autonomous system under verificaiton.
+and the corresponding formalism for describing the autonomous system under verification.
 Secondly, we must decide on which tool to run to verify the property.
 In general, we may expect that different properties, and different levels of abstraction at which they are verified, will require (or be better verified) using different formalisms and tools. 
 For example, verifying a property of the continuous-time dynamics may be done using {\staliro}~\cite{AnnapureddyLFS11tacas},
 whereas verifying a property of the discrete mission planner may be best done using UPPAAL \cite{BehrmannDLHPYH06qest}.
 This motivates the creation of a translator from our detailed HCHA representation of the scenario instance to the different formalisms that are deemed useful. 
 For example: timed automata, weighted timed automata, Ordinary Differential Equation (ODEs), impulsive systems,...etc.
-See Fig.~\ref{fig:toolbus}.
 
 \begin{figure}[tb]
 	\centering
-		\includegraphics{figures/fly.eps}
+		\includegraphics[scale=0.3]{figures/toolbus.pdf}
 	\label{fig:toolbus}
 	\caption{The APEX tool bus.}
 \end{figure}
@@ -30,24 +30,47 @@ This is the familiar notion of behavior inclusion, and it is one more reason for
 the most detailed analysis that can be made on the autonomous system is at the level of the continuous dynamics.
 These are captured in the HCHA. 
 Other aspects are also captured in the HCHA, as explained in Section \ref{HCHA}.
-These details can be abstracted when translating the HCHA to a timed automaton to perform verification using UPPAAL.
-On the other hand, had we chosen timed automata as our IR, we would not have been able to recover the true dynamics from the timed automaton's differential inclusions. This would preclude us from performing accurate reachability computations for example.
+These details can be abstracted when translating the HCHA to, say, a timed automaton to perform verification using UPPAAL.
+On the other hand, had we chosen timed automata as our IR, we would not have been able to recover the true dynamics from the timed automaton's differential inclusions. 
+This would preclude us from performing accurate reachability computations for example, or control performance analysis, such as disturbance rejection and stability.
 
 \todo[inline]{a word on jhow to transfer verif results back to HCHA}
 
-APEX includes a tool bus: once a combination of tools is decided on for a particular verification task, the IR is translated to the formats of these tools and transmitted to them.
+To enable push-button formal verification of the safety-inducing properties, APEX includes a \emph{tool bus}; see Fig.~\ref{fig:toolbus}.
+Once a combination of tools is decided on for a particular verification task, the IR is translated to the formats of these tools and transmitted to them.
 
+%===============================================================================================================
 \subsection{Simulation model}
 \label{simulation model}
-Control engineers, who will be one of the main group of users of APEX, are mostly used to \emph{simulating} their designs under certain initial conditions and inputs from the environment to determine correctness. 
+
+Control engineers, who will be one of the main groups of users of APEX, are mostly used to \emph{simulating} their designs under certain initial conditions and inputs from the environment to help determine correctness. 
 Simulation is also a quick way to get a qualitiative idea of what the system does, and is used iteratively to improve the design.
 It is therefore important for APEX to provide a translation from the IR to a simulation tool, in addition to the translation to formal tools. 
 We chose to add the MathWorks' Simulink \copyright to the tool bus.
-Simulink is well-known to most engineers and has the advantage of a Graphical User Interface which can be leveraged as a design entry tool (see Section \ref{dsl}).
-
+Simulink is well-known to most engineers and allows the creation of custom components to which we can map classes and objects of the DSL.
 Note that because the simulation model will not be subjected to formal verification, there is no need to establish behavioral inclusion between its behavior and the IR.
 
+Moreover, Simulink has code-generation capabilities that we will make use of when studying conformance between the implementation and the model. 
+In Model-Based Design, once a controller model is verified and simulated on a host computer, source code is generated automatically from that model. 
+This source code constitutes the implementation of the model, and will run on the embedded platform. 
+It is, in other words, the actually deployed controller.
+It is important therefore to guarantee that this generated source code behaves in the same way as the verified model.
+Determining that similarity in behavior is the aim of conformance testing.
+\todo[inline]{should we broach the subject of conformance testing at this point? Or rather, to what degree?}
 
+ 
+%===============================================================================================================
 \subsection{Scenario authoring tool and Domain-Specific Language}
 \label{dsl}
-How are the scenarios created? DSL and scenario authoring tool.
+\todo[inline]{Matt}
+How are the scenarios created? 
+Glad you asked: DSL and its formal semantics in terms of HCHA, then scenario authoring tool.
+Gesture towards a GUI, possibly in Simulink (APEX-S). 
+Emphasize that while nondeterminism of the environment will somehow be expressed in APEX-S, we are NOT simulating with non-determinism. For one thing that's impossible, but just to avoid reviewers scratching their heads over what on Earth we mean.
+APEX-S is just an editor. We may leverage it on the tool bus (see previous section), but in and of itself, 'tis an editor.
+\begin{figure}[tb]
+	\centering
+		\includegraphics[scale=0.3]{figures/APEXS.pdf}
+	\caption{APEX-S, the Simulink-based scenario authoring tool}
+	\label{fig:APEXS}
+\end{figure}
