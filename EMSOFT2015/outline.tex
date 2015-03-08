@@ -1,0 +1,60 @@
+\section{outline}
+\label{outline}
+
+Introduction
+\begin{itemize}
+	\item The benefits of autonomous systems.
+	
+	\item The acceptance of autonomous systems in the economy and our daily lives.
+	
+	\item Autonomous vehicles as a running example. What are the "real-world" challenges? (e.g. lane change in some detail, then just list others like pedestrians, other drivers,etc)
+	
+	\item What are the technical challenges facing the development of autonomous vehicles? (e.g. properties with priorities)
+	
+	\item How are these challenges addressed in today's technology and literature?
+	
+	\item What remains to be done?
+	
+	\item Which piece of the puzzle are we addressing in this paper? Illustrate with the running example of a lane change maneuver.
+	
+	\item How are we addressing it?
+	
+	\item The need for formal methods.
+\end{itemize}
+
+
+
+Modeling framework
+\begin{itemize}
+	\item Scenarios and agents (don't dwell too long on this, just need to mention that we are verifying one scenario in this paper, but we have a plan for how this fits with overall mission verification)
+	
+	\item HCHA: because we need a representation rich enough to express on it different types of properties, which apply to different components of the complex autonomous vehicle
+	
+	\item Specification languages: should be suited to the verification goal. Here, reachability and LTL
+
+\end{itemize}
+
+Lane change in the formalisms.
+\begin{itemize}	
+	\item Formal model of lane change in terms of HCHA for system, LTL for scenario goal, and reach sets for safety. Controller is a discrete controller in grid world.
+	
+	\item Lane change requirements can be verified with timed automata, so need to translate HCHA. Give translation.
+	
+	\item How results are mapped back to HCHA
+	
+\end{itemize}
+
+
+Experiment
+\begin{itemize}
+	\item Experimental setup: simulation or actual little vehicles? UPPAAL, dReach, make it available online
+	
+	\item results
+	
+\end{itemize}
+
+Future work
+\begin{itemize}
+	\item Tool chain: from design entry to formal DSL (implementing HCHA) to design files for relevant tools
+	\item priority of requirements?
+\end{itemize}
