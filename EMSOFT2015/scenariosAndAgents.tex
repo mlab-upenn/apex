@@ -5,15 +5,12 @@ On such a trip, the autonomous car will face a number of situations, or \emph{sc
 For example, the car will encounter roundabouts, 
 traffic lights and four-way intersections, 
 on-ramps to highways and merging lanes, 
-slower cars that must be passed, 
 lane changes, 
-off-ramps, 
-pedestrians at designated and non-designated crossing points, 
-stop-and-go traffic, 
+pedestrians at designated and non-designated crossing points,  
 and various traffic signals like speed limits, school zones, etc.
 We therefore think of a driving mission as an ordered sequence of scenarios.
 The exact sequence that will be encountered is not know ahead of time. 
-For example, it is not known whether the car will encounter slow traffic on the road, or whether some road has a large pothole that must be avoided.
+For example, it is not known whether some road has a large pothole that must be avoided.
 Moreover, it is clear that some scenarios, like traffic lights, will be encountered more than once, albeit with minor site-specific differences. 
 The key observation however is that the diversity of scenarios is, to a first order of approximation, finite. 
 That is, there is a recognizable, finite set of scenario types that is sufficient to describe most autonomous navigation missions.
@@ -25,22 +22,21 @@ Then a mission $M$ is a finite string on $\Sc$, $M \in \Sc^*$.
 Note that each such scenario may have multiple realizations (e.g. a roundabout with 3 vehicles in it, a roundabout with 1 vehicle, etc.), so in what follows we will distinguish between scenario types (elements of $\scenarioSet$) and scenario \emph{instances} which can be thought of as instantiations of scenario types.
 When we speak of just a scenario, we mean a scenario instance.
 
-Therefore, if we can verify the safety of the autonomous sytem's behavior in each scenario,
+Therefore, if we can verify the safety of the autonomous system's behavior in each scenario,
 and compose the scenarios in a safe manner, 
 then we have verified that the mission is safe.
 
 Within each scenario, we can recognize a recurring set of entities: 
 the autonomous vehicle whose operation we seek to verify (a.k.a. the \emph{ego} vehicle), the other vehicles on the road, pedestrians, traffic signage, and the road network itself. 
-We will refer to these as \emph{agents}: an agent is ``a person or thing that causes something to happen'' according to the Merriam-Webster dictionary.
-We can make this more precise and further specify that an agent is an entity that functions continuously and autonomously in the environment, and whose presence can be sensed by other agents. 
-It might seem odd at first blush to think of the road network or the traffic signage as agents, but note that we do not require an agent to be animate.
-The road and signage are inanimate agents, that do function autonomously and continuously in any given scenario, and their presence can indeed be sensed by the animate agents (cars and vehicles).
-Moreover, note for example that some traffic lights will adjust their cycles depending on how many cars are passing them, or that travel direction in a lane can change depending on the direction of heaviest traffic.
-Thus this is a case of an inanimate agent sensing and reacting to other agents in the environment.
-As the traffic in major cities becomes more connected and more adaptive, we can expect such cases to increase in number. 
+We will refer to these as \emph{agents}:an agent is an entity that functions continuously and autonomously in the environment, and whose presence can be sensed by other agents. 
+%It might seem odd at first blush to think of the road network or the traffic signage as agents, but note that we do not require an agent to be animate.
+%The road and signage are inanimate agents, that do function autonomously and continuously in any given scenario, and their presence can indeed be sensed by the animate agents (cars and vehicles).
+%Moreover, note for example that some traffic lights will adjust their cycles depending on how many cars are passing them, or that travel direction in a lane can change depending on the direction of heaviest traffic.
+%Thus this is a case of an inanimate agent sensing and reacting to other agents in the environment.
+%As the traffic in major cities becomes more connected and more adaptive, we can expect such cases to increase in number. 
 Formally, we recognize the following set of four agent \emph{types}
 \[\agentTypeSet = \{\texttt{vehicle, pedestrian, road, trafficSignage}\}\]
-Each agent type can have many (parametrized) instances, e.g. $\texttt{trafficSignage}$ can have instances speedLimit(70mph), speedLimit(25mph), HOVLane(3pm-6pm), or noPassingZone.
+Each agent type can have many (parametrized) instances, e.g. $\texttt{trafficSignage}$ can have instances speedLimit(70mph), speedLimit(25mph), HOVLane(3pm-6pm).
 Note that the $\texttt{vehicle}$ agent type can have instances that are autonomous vehicles, and other instances that are human-driven (and therefore that have different behaviors from the ego vehicle, which is by definition autonomous). 
 We denote the set of instances of agents in $\agentTypeSet$ by $I(\agentTypeSet)$.
 Clearly, $I(\agentTypeSet)$ is infinite.

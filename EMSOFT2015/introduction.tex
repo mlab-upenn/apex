@@ -1,51 +1,43 @@
 \section{Introduction}
 \label{introduction}
 
+{\it Autonomy from human intervention in the machines that surround us promises many benefits.}
 
-The acceptance of autonomous systems in the economy and in society in a larger sense.
+{\it Because of these benefits, autonomous and semi-autonomous systems are now an accepted part of the economy and the household.}
 
-Main concern: safety of the interaction between autonomous system and its environment (= other agents, and the physical environment)
+{\it Autonomous vehicles are a particularly challenging class of autonomous systems.}
 
-Air-tight guarantees are required, otherwise liability is on the car manufacturer => formal methods.
+{\it On a typical trip, the autonomous vehicle must recognize, enter, complete and exit many scenarios in a safe and timely manner. Example scenarios include traffic lights, roundabouts, pedestrians, weather conditions, etc. 
+It is not known, ahead of time, what the specific sequence of encountered scenarios will be.}
 
-Safety, to people, means the safety of people involved in the driving situation: car passengers, and people in its 'dorasical' environment (i.e. where the car can take action). 
-In all cases, don't cause harm to them. 
-This is then specialized to scenarios (e.g. don't run a red light) => study scenario safety.
+{\it The corresponding technical challenges can be broadly divided into two categories: operation in a highly unpredictable environment, and a task (navigation) that must be executed at many levels of abstraction.}
 
-Need an end-to-end framework allowing designers and verifiers to model the scenarios, and formally verify them.
+{\it The environment of the autonomous vehicle is unpredictable: will others obey the laws, what will traffic conditions be, etc? What is the vehicle's objective in the short run?}
 
+{\it There is also a wide separation between the highest levels of plan execution ("go from A to B") and the lowest levels of plan execution ("accelerate steadily for the next 5 seconds"). How do we guarantee consistency between the commands at the different levels?}
 
-Need a tool that implements this framework.
+{\it The safety of the car's passengers and of the people in its immediate environment is imperative at all times. In an emergency, how do we recognize what laws can be broken to preserve safety?}
+\footnote{Interesting legal question: if the car, by design, violates some law to avoid harming someone, how long before the manufacturer gets sued for purposefully breaking the law? Think about swerving too hard and "losing control of the vehicle" to avoid running over someone.}
 
-The framework must: 
-\begin{itemize}
-\item allow the formal description of scenarios, to permit their formal verification
-\item allow the use of tried-and-true FV tools
-\item allow simulation of scenarios
-\item take into account the continuous dynamics of the car (somehow - doesn't mean everyone worries about them, but if they're abstracted away that abstraction must be verified as lossless under the scenarios)
-\item allow porting the FV results from models to implementations (HW in the loop and subsequent stages)
-\end{itemize}
+{Guaranteeing safety to a socially acceptable degree requires formal guarantees.}
 
-The tool must:
-\begin{itemize}
-	\item be usable by non-FV experts (control engineers, traffic engineers, others?)
-	\item allow push-button FV run (see first item)
-	\item present as fast a learning curve as possible (e.g. by leveraging existing familiar GUIs like Simulink's)
-\end{itemize}
+{\it Today we have theories that deal with high-level planning in a discrete grid world: where the car should go given where everyone else is.}
 
-In this paper, we use autonomous vehicles as an example.
+{\it We also have discrete theories for verification of temporal logic properties of the closed-loop system modeled as a Kripke structure. Some of these theories are amenable to model checking.}
 
-\subsection{Related work}
-\todo[inline]{Matt, please chime in}
-Work on autonomous navigation: DARPA urban challenge papers, controller synthesis papers.
+{\it Control theory provides analysis and design tools of low level controllers. Automatic analysis tools exist but are limited in scope.}
 
-DSL: that paper by the french authors, others?
+{\it Because of the large degree of unpredictability, compute- and memory-intensive low level methods can't be used alone (let alone manual methods). Yet because of the safety imperative, we can't rely on non-guaranteed abstractions.  In this paper, we demonstrate the need for using multiple formalisms in the verification of autonomous plans. We illustrate this with a case study of a typical lane change maneuver.}
 
-Scenarios and agents: there has to be a tonne here...the papers referenced by Matt in the APEX preso
-
-Interaction between model checkers and other verif tools: CEGAR, matthias and CMU guy, spaceex.
-
-Other semi-formal verif: staliro, breach, apx bisimulations.
+%Work on autonomous navigation: DARPA urban challenge papers, controller synthesis papers.
+%
+%DSL: that paper by the french authors, others?
+%
+%Scenarios and agents: there has to be a tonne here...the papers referenced by Matt in the APEX preso
+%
+%Interaction between model checkers and other verif tools: CEGAR, matthias and CMU guy, spaceex.
+%
+%Other semi-formal verif: staliro, breach, apx bisimulations.
 
 \subsection{Notation}
 We denote the set of integers including 0 with $\Ne$. 
