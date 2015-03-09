@@ -1,21 +1,18 @@
 \subsection{Decomposing a mission into scenarios and agents}
 \label{scenarios and agents}
-To motivate our thinking about the problem of safe autonomous navigation, we consider the problem of driving between two designated points, for example the cities of New York and Philadelphia in the U.S.
+{\it To motivate our thinking about the problem of safe autonomous navigation, we consider the case of a trip between two designated points.}
 On such a trip, the autonomous car will face a number of situations, or \emph{scenarios}, which it must know how to recognize, enter, negotiate, and exit in a safe and timely manner.
 For example, the car will encounter roundabouts, 
 traffic lights and four-way intersections, 
 on-ramps to highways and merging lanes, 
-slower cars that must be passed, 
 lane changes, 
-off-ramps, 
-pedestrians at designated and non-designated crossing points, 
-stop-and-go traffic, 
+pedestrians at designated and non-designated crossing points,  
 and various traffic signals like speed limits, school zones, etc.
 We therefore think of a driving mission as an ordered sequence of scenarios.
 The exact sequence that will be encountered is not know ahead of time. 
-For example, it is not known whether the car will encounter slow traffic on the road, or whether some road has a large pothole that must be avoided.
+%For example, it is not known whether some road has a large pothole that must be avoided.
 Moreover, it is clear that some scenarios, like traffic lights, will be encountered more than once, albeit with minor site-specific differences. 
-The key observation however is that the diversity of scenarios is, to a first order of approximation, finite. 
+{\it The key observation however is that the diversity of scenarios is, to a first order of approximation, finite.} 
 That is, there is a recognizable, finite set of scenario types that is sufficient to describe most autonomous navigation missions.
 
 Formally, let $\Sc = \{s_0,s_1,\ldots,s_{N-1}\}$ be a set of scenarios. 
@@ -25,30 +22,29 @@ Then a mission $M$ is a finite string on $\Sc$, $M \in \Sc^*$.
 Note that each such scenario may have multiple realizations (e.g. a roundabout with 3 vehicles in it, a roundabout with 1 vehicle, etc.), so in what follows we will distinguish between scenario types (elements of $\scenarioSet$) and scenario \emph{instances} which can be thought of as instantiations of scenario types.
 When we speak of just a scenario, we mean a scenario instance.
 
-Therefore, if we can verify the safety of the autonomous sytem's behavior in each scenario,
+Therefore, if we can verify the safety of the autonomous system's behavior in each scenario,
 and compose the scenarios in a safe manner, 
 then we have verified that the mission is safe.
 
-Within each scenario, we can recognize a recurring set of entities: 
+{\it Within each scenario, we can recognize a recurring set of entities: }
 the autonomous vehicle whose operation we seek to verify (a.k.a. the \emph{ego} vehicle), the other vehicles on the road, pedestrians, traffic signage, and the road network itself. 
-We will refer to these as \emph{agents}: an agent is ``a person or thing that causes something to happen'' according to the Merriam-Webster dictionary.
-We can make this more precise and further specify that an agent is an entity that functions continuously and autonomously in the environment, and whose presence can be sensed by other agents. 
-It might seem odd at first blush to think of the road network or the traffic signage as agents, but note that we do not require an agent to be animate.
-The road and signage are inanimate agents, that do function autonomously and continuously in any given scenario, and their presence can indeed be sensed by the animate agents (cars and vehicles).
-Moreover, note for example that some traffic lights will adjust their cycles depending on how many cars are passing them, or that travel direction in a lane can change depending on the direction of heaviest traffic.
-Thus this is a case of an inanimate agent sensing and reacting to other agents in the environment.
-As the traffic in major cities becomes more connected and more adaptive, we can expect such cases to increase in number. 
+We will refer to these as \emph{agents}:an agent is an entity that functions continuously and autonomously in the environment, and whose presence can be sensed by other agents. 
+\todo[inline]{main literature for agents}
+%It might seem odd at first blush to think of the road network or the traffic signage as agents, but note that we do not require an agent to be animate.
+%The road and signage are inanimate agents, that do function autonomously and continuously in any given scenario, and their presence can indeed be sensed by the animate agents (cars and vehicles).
+%Moreover, note for example that some traffic lights will adjust their cycles depending on how many cars are passing them, or that travel direction in a lane can change depending on the direction of heaviest traffic.
+%Thus this is a case of an inanimate agent sensing and reacting to other agents in the environment.
+%As the traffic in major cities becomes more connected and more adaptive, we can expect such cases to increase in number. 
 Formally, we recognize the following set of four agent \emph{types}
 \[\agentTypeSet = \{\texttt{vehicle, pedestrian, road, trafficSignage}\}\]
-Each agent type can have many (parametrized) instances, e.g. $\texttt{trafficSignage}$ can have instances speedLimit(70mph), speedLimit(25mph), HOVLane(3pm-6pm), or noPassingZone.
+Each agent type can have many (parametrized) instances, e.g. $\texttt{trafficSignage}$ can have instances speedLimit(70mph), speedLimit(25mph), HOVLane(3pm-6pm).
 Note that the $\texttt{vehicle}$ agent type can have instances that are autonomous vehicles, and other instances that are human-driven (and therefore that have different behaviors from the ego vehicle, which is by definition autonomous). 
 We denote the set of instances of agents in $\agentTypeSet$ by $I(\agentTypeSet)$.
 Clearly, $I(\agentTypeSet)$ is infinite.
 When we just speak of an agent, we mean an agent instance.
 
-In addition to the sensible traffic signage, the car must observe the imperceptible laws of the road, i.e., laws that don't have a physical manifestation. 
+{\it In addition to the perceptible traffic signage, the car must observe the imperceptible laws of the road, i.e., laws that don't have a physical manifestation. }
 For example, one such law says that on the highway, a faster car must always pass on the left of a slower car that's in front of it.
-Another law says that a car must not be so slow so as to impede traffic flow. 
 These laws constitute constraints on the car's behavior in some or all of the above scenarios.
 
 Formally, a scenario instance is a tuple $(T, \agentInstanceSet,\behavior, L)$ where
@@ -56,25 +52,13 @@ Formally, a scenario instance is a tuple $(T, \agentInstanceSet,\behavior, L)$ w
 \item $T \in \Ne^*$ is a positive discrete time horizon on the scenario.
 %
 \item $A$ is a collection of agent \emph{instances} from the set $I(\agentTypeSet)$.
-E.g an instance of scenario $s_0$ (Roundabout) might have the agents 
-\begin{eqnarray*}
-\agentInstanceSet = \{&egoVehicle, otherVehicle1, rndAbt(3), \\ 
-& speedLimit(25mph)\} \subset I(\agentTypeSet)
-\end{eqnarray*}
-where $egoVehicle$ and $otherVehicle1$ are instances of type $\texttt{vehicle}$, 
-$rndAbout(n)$ is an instance of $\texttt{road}$ indicating a round-about with $n$ entry points (which are also exit points),
-and $speedLimit(Vmph)$ is an intance of $\texttt{trafficSignage}$ indicating a speed limit sign that reads $V$ mph.
-Another scenario instance has the agents
-\begin{eqnarray*}
-\agentInstanceSet = \{&EgoVehicle, OtherVehicle1, rndAbt(2), \\ 
-& speedLimit(35mph)\} \subset I(\agentTypeSet)
-\end{eqnarray*}
 The set $\agentInstanceSet$ always includes the ego vehicle, i.e., the system whose safe behavior we want to verify.
 %
 \item $\behavior = \{\behavior_a \sut a \in \agentInstanceSet \setminus \{egoVehicle\}\}$ is a bounded-time behavior description for each of the agent instances.
-Describing the behavior $\behavior_a$ of an agent instance requires us to formally describe an agent. We do so in Section \ref{HCHA} using hierarcical communicating hybrid automata.
+Describing the behavior $\behavior_a$ of an agent instance requires us to formally describe an agent. 
+We do so in Section \ref{HCHA} using hierarchical communicating hybrid automata.
 %
-\item $L = \{\mode_0,\ldots,\mode_p\}$ is a finite set of $p \in \Ne$ traffic laws applicable in this scenario. 
+\item $L = \{\mode_0,\ldots,\mode_p\}$ is a finite set of $p \in \Ne$ traffic laws. 
 A law $\mode_i$ is itself a tuple $\mode_i = (\alpha_i,\formula_i)$, 
 where $\alpha_i$ is an element from $\{0,1\}^T$ indicating at every time instant whether the law is active or not, 
 and $\formula_i$ is a temporal logic formula indicating how the law (when it is active) constrains the behavior of the vehicle. 
@@ -86,3 +70,22 @@ We will have more to say about this in the following sections.
 Each law represents a time-varying constraint on the allowed ego vehicle's behavior, \emph{but not necessarily on the behavior of other vehicles}.
 That is, our verification algorithms do not necessarily assume that other vehicles will obey traffic laws. 
 What assumptions we make on the behavior of other vehicles is captured in $\behavior$.
+
+\begin{exmp}[Lane change continued]
+	Describe lane change scenario in above language, including some parametrized agent
+\end{exmp}
+	
+%	E.g an instance of scenario $s_0$ (Roundabout) might have the agents 
+%	\begin{eqnarray*}
+%		\agentInstanceSet = \{&egoVehicle, otherVehicle1, rndAbt(3), \\ 
+%		& speedLimit(25mph)\} \subset I(\agentTypeSet)
+%	\end{eqnarray*}
+%	where $egoVehicle$ and $otherVehicle1$ are instances of type $\texttt{vehicle}$, 
+%	$rndAbout(n)$ is an instance of $\texttt{road}$ indicating a round-about with $n$ entry points (which are also exit points),
+%	and $speedLimit(Vmph)$ is an intance of $\texttt{trafficSignage}$ indicating a speed limit sign that reads $V$ mph.
+%	Another scenario instance has the agents
+%	\begin{eqnarray*}
+%		\agentInstanceSet = \{&EgoVehicle, OtherVehicle1, rndAbt(2), \\ 
+%		& speedLimit(35mph)\} \subset I(\agentTypeSet)
+%	\end{eqnarray*}
+%	

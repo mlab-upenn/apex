@@ -2,18 +2,20 @@
 \label{verifyingSafety}
 (Matt's class project)
 
-\todo[inline]{Matt: literature review}
+{\it To verify the lane change scenario given in the previous sections, we must integrate two formalisms: timed automata for correctness of the controller's actions, and reachability for safety of the controller's actions.}
 
-In this section, we illustrate the need to use two different formalisms to verify the safety of a discrete controller. 
-Namely, we demonstrate how reachability computations can be combined with model checking to verify that the control commands issued by a controller not only guarantee completing the scenario, but also can be implemented in a manner that avoids collisions between the ego and other vehicles.
-Such a use case is well-suited for APEX, since the IR can be translated to inputs to both the model checker (here, UPPAAL) and the reachability computation tool (here, dReach).
+{\it We translate the scenarios's HCHA to timed automata.}
+
+{\it Once verified, we map back the verification results to the HCHA formalism.}
+
+\todo[inline]{literature review}
 
 \todo[inline]{Pending the lit review, might be worth investigating two approaches we discussed:
 if the boxes of the partition used by controller are over-approximations of the reach set alphabet, and model checker returns SAT, then must compute reachability for every satisfying trace. Obviously, can get expensive.
 
 Else, we can partition the state space using the reach set alphabet as explained on the board, so the model checker's answer needn't be concretized: by construction it gives a sound and complete answer.
 
-I'd be very suprised if these two don't have antecedents in the litterature, they're natural enough...
+I'd be very surprised if these two don't have antecedents in the literature, they're natural enough...
 
 Because ours is a verification task, it's not up to us to dictate the controller's view of the world.
 }

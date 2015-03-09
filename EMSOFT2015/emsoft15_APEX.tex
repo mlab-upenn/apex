@@ -43,55 +43,7 @@
 %\crdata{0-12345-67-8/90/01}  % Allows default copyright data (0-89791-88-6/97/05) to be over-ridden - IF NEED BE.
 % --- End of Author Metadata ---
 
-\title{APEX: Autonomous Plan Verification and Execution}
-%\subtitle{[Extended Abstract]
-%\titlenote{A full version of this paper is available as
-%\textit{Author's Guide to Preparing ACM SIG Proceedings Using
-%\LaTeX$2_\epsilon$\ and BibTeX} at
-%\texttt{www.acm.org/eaddress.htm}}}
-%
-\numberofauthors{4} 
-%
-\author{
-% The command \alignauthor (no curly braces needed) should
-% precede each author name, affiliation/snail-mail address and
-% e-mail address. Additionally, tag each line of
-% affiliation/address with \affaddr, and tag the
-% e-mail address with \email.
-%
-% 1st. author
-\alignauthor
-Matthew O'Kelly\\
-       \affaddr{Department of Electrical and Systems Engineering}\\
-       \affaddr{University of Pennsylvania}\\
-       \affaddr{Philadelphia, PA}\\
-       \email{habbas@seas.upenn.edu}
-% 2nd. author
-\alignauthor
-Houssam Abbas\\
-       \affaddr{Department of Electrical and Systems Engineering}\\
-       \affaddr{University of Pennsylvania}\\
-       \affaddr{Philadelphia, PA}\\
-       \email{mokelly@seas.upenn.edu}
-\alignauthor Truong Nghiem\\
-       \affaddr{Automatic Control Laboratory}\\
-       \affaddr{EPFL}\\
-       \affaddr{Lausanne, Switzerland}\\
-       \email{nghiem@seas.upenn.edu}			
-\and % use '\and' if you need 'another row' of author names
-\alignauthor
-Sicun Gao\\
-       \affaddr{CSAIL}\\
-       \affaddr{MIT}\\
-       \affaddr{Cambridge, MA}\\
-       \email{sicung@csail.mit.edu}
-\and  
-\alignauthor Rahul Mangharam\\
-       \affaddr{Department of Electrical and Systems Engineering}\\
-       \affaddr{University of Pennsylvania}\\
-       \affaddr{Philadelphia, PA}\\
-       \email{rahulm@seas.upenn.edu}
-}
+\title{When all you have is not a hammer: multi-formalism verification of autonomous plans}
 \date{\today}
 % Just remember to make sure that the TOTAL number of authors
 % is the number that will appear on the first page PLUS the
@@ -109,16 +61,16 @@ Sicun Gao\\
 \terms{Theory}
 
 \keywords{ACM proceedings, \LaTeX, text tagging}
+\input{outline}
 
 \input{introduction}
-% Scenarios, agents and hierarchical communicating HA
 \input{framework} 
-% Scenario authoring tool, DSL, tool bus
-\input{designEntryAndToolBus}
-% Matt's project
 \input{verifyingSafety}
-% Le case study
 \input{caseStudy}
+\input{conclusions}
+% Scenario authoring tool, DSL, tool bus
+%\input{designEntryAndToolBus}
+
 
 \bibliographystyle{abbrv}
 \bibliography{emsoft15,conformance,HSCC2015_CompositionalConf,fainekos_bibrefs,houssam,SAREDnonlinear_2014}
