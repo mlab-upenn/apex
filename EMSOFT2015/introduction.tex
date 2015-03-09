@@ -16,10 +16,18 @@ It is not known, ahead of time, what the specific sequence of encountered scenar
 
 {\it There is also a wide separation between the highest levels of plan execution ("go from A to B") and the lowest levels of plan execution ("accelerate steadily for the next 5 seconds"). How do we guarantee consistency between the commands at the different levels?}
 
-{\it The safety of the car's passengers and of the people in its immediate environment is imperative at all times. In an emergency, how do we recognize what laws can be broken to preserve safety?}
-\footnote{Interesting legal question: if the car, by design, violates some law to avoid harming someone, how long before the manufacturer gets sued for purposefully breaking the law? Think about swerving too hard and "losing control of the vehicle" to avoid running over someone.}
+{\it The safety of the car's passengers and of the people in its immediate environment is imperative at all times. 
+	What does safety mean in a given scenario?
+	In an emergency, how do we recognize what laws can be broken to preserve safety?}
+%\footnote{Interesting legal question: if the car, by design, violates some law to avoid harming someone, how long before the manufacturer gets sued for purposefully breaking the law? Think about swerving too hard and "losing control of the vehicle" to avoid running over someone.}
+%\footnote{Other notions of safety, such as passive safety where the autonomous system must not endanger others via \emph{inaction}, or extensions of the safety imperative to not damaging property (and not just people) are not covered here. We note nonetheless that guaranteeing that the active safety imperative is obeyed contributes to guaranteeing these other notions are also obeyed.}
+%For people to feel comfortable interacting with potentially dangerous autonomous agents, like autonomous cars, it is imperative that they be confident that these systems are at least as safe as the human-operated systems they are replacing.
+%In fact, for there to be an economic value behind the introduction of autonomous systems, they must, among other things, guarantee an increased level of safety relative to the current system. 
+%Increased and more consistent efficiency and effectiveness at completing their tasks are other desiderata, which are outside the scope of this paper.
+%We call this the `dorasical' environment, from the Greek $\delta \rho \acute{\alpha} \sigma \eta$ for action.
 
-{Guaranteeing safety to a socially acceptable degree requires formal guarantees.}
+
+{\it Guaranteeing safety to a socially acceptable degree requires formal guarantees.}
 
 {\it Today we have theories that deal with high-level planning in a discrete grid world: where the car should go given where everyone else is.}
 
@@ -28,6 +36,12 @@ It is not known, ahead of time, what the specific sequence of encountered scenar
 {\it Control theory provides analysis and design tools of low level controllers. Automatic analysis tools exist but are limited in scope.}
 
 {\it Because of the large degree of unpredictability, compute- and memory-intensive low level methods can't be used alone (let alone manual methods). Yet because of the safety imperative, we can't rely on non-guaranteed abstractions.  In this paper, we demonstrate the need for using multiple formalisms in the verification of autonomous plans. We illustrate this with a case study of a typical lane change maneuver.}
+
+\begin{exmp}[Lane change maneuver]
+	We describe a typical lane change scenario, where a faster car seeks to get in the passing lane to pass a slower car in front of it. 
+	
+	\todo[inline]{who's involved in this scenario; what is the goal of ego vehicle; what is the sfaety constraint; why model checking alone won't suffice.}
+\end{exmp}
 
 %Work on autonomous navigation: DARPA urban challenge papers, controller synthesis papers.
 %
@@ -42,4 +56,4 @@ It is not known, ahead of time, what the specific sequence of encountered scenar
 \subsection{Notation}
 We denote the set of integers including 0 with $\Ne$. 
 Given a subset $S$ of the reals, $S^* = S \setminus \{0\}$ and $S_+ = S \cap [0,\infty)$,
-while $S_+^* = S cap (0,\infty)$.
+while $S_+^* = S \cap (0,\infty)$.

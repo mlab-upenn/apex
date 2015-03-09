@@ -1,19 +1,29 @@
 \subsection{Hierarchical communicating hybrid \\automata}
 \label{HCHA}
-Because autonomous systems are physical systems controlled by software, hybrid automata (HA) are a suitable formalism for modeling them.
-Because the complexity of autonomous systems is significant, they are typically designed at multiple levels of abstraction, 
-with different teams handling the design at different levels.
-E.g. the mapping team might design the algorithm for finding the waypoints along a shortest route from start to end.
-For this design, knowledge about, say, the powertrain control of the car is immaterial and abstracted away.
-Indeed, details about the road itself are abstracted away as well.
-Instead, it is represented as a directed graph.
+{\it As noted in the introduction, the execution of an autonomous plan involves many levels of abstraction. The verification must cover all these levels.}
 
-The resulting system's description is given at multiple levels of abstraction (or multiple levels of detail). 
-To model this situation, we adopt \emph{hierarchical} HA: each mode of the HA is itself an HA, down to some level.
+{\it We use the formalism of hierarchical communicating hybrid automata (HCHA) to model agents in the scenario. }
+\todo[inline]{Charpn, Ptolemy}
+%Because autonomous systems are physical systems controlled by software, hybrid automata (HA) are a suitable formalism for modeling them.
+%Because the complexity of autonomous systems is significant, they are typically designed at multiple levels of abstraction, 
+%with different teams handling the design at different levels.
+%E.g. the mapping team might design the algorithm for finding the waypoints along a shortest route from start to end.
+%For this design, knowledge about, say, the powertrain control of the car is immaterial and abstracted away.
+%Indeed, details about the road itself are abstracted away as well.
+%Instead, it is represented as a directed graph.
+%
+%The resulting system's description is given at multiple levels of abstraction (or multiple levels of detail). 
+%To model this situation, we adopt \emph{hierarchical} HA: each mode of the HA is itself an HA, down to some level.
+%
+%Finally because these HHA, each representing an agent, are sensed by other agents in the scenario, we must model this sensing. 
+%We do so via the inputs to each HHA: given agent instance $a$, every other agent is associated with an input port on $a$.
+%When that other agent is within sensing distance of $a$, that input port is occupied by that agent's sensed information.
 
-Finally because these HHA, each representing an agent, are sensed by other agents in the scenario, we must model this sensing. 
-We do so via the inputs to each HHA: given agent instance $a$, every other agent is associated with an input port on $a$.
-When that other agent is within sensing distance of $a$, that input port is occupied by that agent's sensed information.
+{\it The behaviors of the non-ego agents are described, at the lowest level, via a possibly non-deterministic sequence of reach sets.}
 
+{\it HCHA can be translated to various other formalisms. We consider the case of timed automata, and of ODEs (i.e. dynamical systems).}
 
-\todo[inline]{Charon, Ptolemy}
+\begin{exmp}[Lane change continued]
+	We model the lane change scenario using HCHA as follows
+	\end{exmp}
+
