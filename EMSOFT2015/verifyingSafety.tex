@@ -17,6 +17,7 @@ Hierarchical controls are commonly used to reason about systems which control re
 \end{prop}
 
 {\it Thus, once each subsystem can be verified, we must map back the verification results to the HCHA formalism.}
+
 Going a step beyond the results in \cite{Pappas1998} We propose that the relationship between verification, in the sense of logical analysis of a system, and control, in the sense of the evolution of state variables described by nonlinear ODEs, is so tightly intertwined that new approaches to system design are necessary. By viewing the activities of correct by construction controller design and verification as tightly coupled processes instead of distinct options we can design solutions for richer, more complex problems. Returning to the lane change case study, we summarize state of the art work in the area of provably safe nonlinear hybrid systems verification and control.
 
 One approach to designing safe lane change and evasive vehicle maneuvers explores the use of reachability to generate an automaton which switches between motion primitives in an offline phase. Online the precomputed reachable sets of motion primitives are compared to the reachable sets of the other agents. It is possible to perform the reachable set calculations online because there is less non-determinism about the initial state of the other agents, there is no tracking controller in the loop, and the dynamics are simpler.\cite{Hess2014}
