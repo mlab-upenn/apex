@@ -1,9 +1,48 @@
-\subsection{Hierarchical communicating hybrid \\automata}
+\subsection{Communicating hierarchical hybrid \\automata}
 \label{HCHA}
 {\it As noted in the introduction, the execution of an autonomous plan involves many levels of abstraction. The verification must cover all these levels.}
 
 {\it We use the formalism of hierarchical communicating hybrid automata (HCHA) to model agents in the scenario. }
-\todo[inline]{Charon, Ptolemy}
+\todo[inline]{Charon: make sure that the HCHA is implemented in Charon (or something close)}
+\todo[inline]{Ptolemy}
+
+\begin{defn}[Hybrid automaton]
+	
+	\end{defn}
+	
+The differential equations in each mode of the HA model the continuous-time closed-loop behavior of the low-level controlled systems, i.e., the mechanical systems of the car such as the powertrain. 
+The modes themselves model the application of different control laws. 
+Transitions between modes, modeled to be instantaneous, are caused by the satisfaction of certain guard conditions that depend on time, the current state, and the initial state of the system.
+
+\begin{defn}[Hierarchical hybrid automaton]
+	
+\end{defn}
+A hierarchical HA (HHA) is an HA, each of whose modes is itself an HA.
+I.e., the dynamics in a given mode of the HHA are provided by an HA.
+This hierarchy can be deepened to more than two levels, that is, the mode-embedded HA can itself be an HHA.
+
+
+\begin{defn}[Communicating hybrid automata]
+	
+\end{defn}
+A set of communicating HA (CHA) is a set of HA that \emph{occasionally} share state variables.
+That is, each HA in a CHA has a `message board' to which it posts events about its behavior.
+Other HAs in the CHA can subscribe and unsubscribe to it: 
+subscribed HAs can make use of that information, whereas the rest can't. 
+Subscription is not voluntary: it is triggered by the common evolution of the CHA.
+For example, a traffic light is broadcasting its current state (Green, Red or Yellow).
+A car won't subscribe to this message board until it is within line of sight of, and sufficient proximity to, the light.
+
+
+\begin{defn}[Communicating hierarchical hybrid automata]
+	\label{def:CHHA}
+	
+	
+\end{defn}
+Communicating hierarchical hybrid automata (CHHA) are simply a CHA where each component automaton is an HHA.
+
+
+
 %Because autonomous systems are physical systems controlled by software, hybrid automata (HA) are a suitable formalism for modeling them.
 %Because the complexity of autonomous systems is significant, they are typically designed at multiple levels of abstraction, 
 %with different teams handling the design at different levels.
