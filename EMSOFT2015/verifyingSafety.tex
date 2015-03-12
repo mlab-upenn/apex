@@ -1,8 +1,11 @@
 \section{Verifying the safety of abstract plans for discrete maneuvers}
 \label{verifyingSafety}
 
-\todo [inline ] {Do we really mean the first sentence. Lets again talk about the difference between correctness and safety tomorrow. I think correctness equals goal satisfaction, safety equals dont crash}
-{\it To verify the lane change scenario given in the previous sections, we must integrate two formalisms: timed automata for correctness of the controller's actions, and reachability for safety of the controller's actions.} We have already defined the basic representation of an autonomous driving scenario as a HCHA. A single mode of the HCHA can be viewed from two perspectives: discrete as represented by a state in a timed automaton, and continuous as represented by a plant and systems of nonlinear ODEs. Interaction between these representations occurs when guard conditions in the discrete representation are encountered. One way of reasoning about the goal specifying behavior of the scenario controller is to investigate the safety and performance of the timed automaton using model checking methods.
+{\it To verify the lane change scenario given in the previous sections, we must integrate two formalisms: timed automata for correctness of the controller's actions (is the scenario's goal achieved?), and reachability for safety of the controller's actions.} 
+We have already defined the basic representation of an autonomous driving scenario as a HCHA. 
+A single mode of the HCHA can be viewed from two perspectives: discrete as represented by a state in a timed automaton, and continuous as represented by a plant and systems of nonlinear ODEs. 
+Interaction between these representations occurs when guard conditions in the discrete representation are encountered. 
+One way of reasoning about the goal specifying behavior of the scenario controller is to investigate the safety and performance of the timed automaton using model checking methods.
 
 {\it Thus, we translate the scenarios's HCHA to timed automata.} Given the HCHA it is possible to create a map which has abstracts the system to a timed automaton on which we can perform verification tasks. 
 \begin{thm}
