@@ -10,18 +10,23 @@
 {\it On a typical trip, the autonomous vehicle must recognize, enter, complete and exit many scenarios in a safe and timely manner. Example scenarios include traffic lights, roundabouts, pedestrians, weather conditions, etc. 
 It is not known, ahead of time, what the specific sequence of encountered scenarios will be.}
 
-{\it The corresponding technical challenges can be broadly divided into two categories: operation in a highly unpredictable environment, and a task (navigation) that must be executed at many levels of abstraction.}
+{\it The corresponding technical challenges can be broadly divided into three categories: first, operation in a highly unpredictable environment. }
+
+{\it Second, a task (navigation) that must be executed at many levels of abstraction.}
+
+{\it Third, the task execution must satisfy three different types of constraints: safety, comfort and performance. Alternatively, these can be viewed as three objectives to be maximized.}
 
 {\it The environment of the autonomous vehicle is unpredictable: will others obey the laws, what will traffic conditions be, etc? What is the vehicle's objective in the short run?}
 
 {\it There is also a wide separation between the highest levels of plan execution ("go from A to B") and the lowest levels of plan execution ("accelerate steadily for the next 5 seconds"). How do we guarantee consistency between the commands at the different levels?}
 
+{\it The constraints of safety, comfort and performance belong to different domains of analysis and are likely most naturally expressed and verified with different formalisms.
+	How can verification results from one domain be ported over to another domain, so a coherent view of the system's operation arises?}
+
 {\it The safety of the car's passengers and of the people in its immediate environment is imperative at all times. 
 	What does safety mean in a given scenario?
 	In an emergency, how do we recognize what laws can be broken to preserve safety?}
 
-\todo[inline]{Safety,comfort,performance}
-%\footnote{Interesting legal question: if the car, by design, violates some law to avoid harming someone, how long before the manufacturer gets sued for purposefully breaking the law? Think about swerving too hard and "losing control of the vehicle" to avoid running over someone.}
 %\footnote{Other notions of safety, such as passive safety where the autonomous system must not endanger others via \emph{inaction}, or extensions of the safety imperative to not damaging property (and not just people) are not covered here. We note nonetheless that guaranteeing that the active safety imperative is obeyed contributes to guaranteeing these other notions are also obeyed.}
 %For people to feel comfortable interacting with potentially dangerous autonomous agents, like autonomous cars, it is imperative that they be confident that these systems are at least as safe as the human-operated systems they are replacing.
 %In fact, for there to be an economic value behind the introduction of autonomous systems, they must, among other things, guarantee an increased level of safety relative to the current system. 
@@ -69,3 +74,4 @@ It is clearly possible to specify these properties using LTL operators (always a
 We denote the set of integers including 0 with $\Ne$. 
 Given a subset $S$ of the reals, $S^* = S \setminus \{0\}$ and $S_+ = S \cap [0,\infty)$,
 while $S_+^* = S \cap (0,\infty)$.
+A \emph{discrete} variable takes values in a finite set, and a \emph{continuous} variable takes values in a closed subset of $\reals^n$ for some $n$.

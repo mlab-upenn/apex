@@ -37,7 +37,8 @@ We will refer to these as \emph{agents}:an agent is an entity that functions con
 %As the traffic in major cities becomes more connected and more adaptive, we can expect such cases to increase in number. 
 Formally, we recognize the following set of four agent \emph{types}
 \[\agentTypeSet = \{\texttt{vehicle, pedestrian, road, trafficSignage}\}\]
-\todo[inline]{road as an agent? sounds fishy and contrived}
+\todo[inline]{road is no longer an agent}
+
 Each agent type can have many (parametrized) instances, e.g. $\texttt{trafficSignage}$ can have instances speedLimit(70mph), speedLimit(25mph), HOVLane(3pm-6pm).
 Note that the $\texttt{vehicle}$ agent type can have instances that are autonomous vehicles, and other instances that are human-driven (and therefore that have different behaviors from the ego vehicle, which is by definition autonomous). 
 We denote the set of instances of agents in $\agentTypeSet$ by $I(\agentTypeSet)$.

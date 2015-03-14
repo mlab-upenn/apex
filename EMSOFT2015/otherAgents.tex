@@ -1,0 +1,19 @@
+\section{Other agents}
+\label{otherAgents}
+
+{\it The road network is static in a given scenario.}
+\begin{defn}
+	\label{def:road}
+	A \textbf{road agent instance $\Rc$} is a tuple $(R, G_1,\ldots, G_r)$ where 
+	$R$ is a subset of $\reals^2$
+	and $G_i = (V_i,E_i)$ is a directed graph for which there exists a partition $R_i$ of $R$ and a bijection $b_i: V_i \rightarrow R_i$ between $R_i$ and $V_i$ such that
+	\begin{itemize}
+		\item  $(v,v') \in E_i$ iff $b_i(v)\cap b_i(v') \neq \emptyset$
+		\item $R_i$ is a refinement of $R_{i+1}$
+	\end{itemize}
+	\end{defn}
+
+The direction of each edge in $G_i$ is part of the road agent's data.
+The set $R$ represents the most accurate representation of the road network in a given scenario.
+The successive partitions $R_i$ represent coarser and coarser representations of the road, and their operational view that is used by controllers is given by the graphs $G_i$.
+
