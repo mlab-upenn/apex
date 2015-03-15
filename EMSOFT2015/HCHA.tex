@@ -17,13 +17,13 @@ is a tuple
 \[\Sys = (\stSet, \modeSet, E, Inv, \{F_\mode\}_{\mode \in \modeSet}, \guard, \reset, \funcOut, C)\]
 where 
 \begin{itemize}
-	\item $\stSet \subseteq \Re^n$ is the `continuous' state space of the system.
-	\item $\modeSet \subset \Ne$ is a finite set of locations, or control modes, that the system switches through. 
+	\item $\stSet \subseteq \Re^n$ is the continuous state space of the system.
+	\item $\modeSet \subset \Ne$ is a finite set of control locations that the system switches through. 
 	\item $\hsSet \triangleq \modeSet \times \stSet$ is then the hybrid state space.
-	\item $F_\mode : \stSet \times \inpSet \rightarrow \Re^n$ defines a differential inclusion governing the evolution of the state: $\dot{\stPt} \in F_\mode(\stPt,u)$. 
+	\item $F_\mode : \stSet \times \inpSet \rightarrow \Re^n$ defines a differential inclusion governing the evolution of the state in location $\mode$: $\dot{\stPt} \in F_\mode(\stPt,u)$. 
 	\item $Inv : \modeSet \rightarrow 2^\stSet$ defines an invariant condition on the state while in location $\mode$.
-	\item $E \subseteq \modeSet \times \modeSet$ is the set of control mode transitions (a.k.a. switches, or jumps).
-	\item $\guard : E \times \stSet \times \inpSet \rightarrow 2^\stSet$ is the guard condition that enables a mode transition. 
+	\item $E \subseteq \modeSet \times \modeSet$ is the set of location transitions (a.k.a. switches, or jumps).
+	\item $\guard : E \times \stSet \times \inpSet \rightarrow 2^\stSet$ is the guard condition that enables a location transition. 
 	Namely, the system switches between $\mode _i$ and $\mode _j$ when the state $\stPt$ is in $\guard((\mode_i,\mode _j),x,u)$.
 	\item $\reset : \modeSet \times \stSet \rightarrow \modeSet \times \stSet $ is a reset map that, given a transition $e = (\mode _i,\mode _j) \in E$ and a point $x$ on the guard $\guard(e)$, maps $x$ to a point $x^+$ in the invariant set of the next location $\mode_j$:
 	\[\reset: (x,(\mode _i,\mode _j)) \rightarrow (\mode_j,x^+)\;, x^+ \in Inv(\mode_j)\] 
@@ -39,122 +39,57 @@ It is widely recognized now that different navigation situations call for differ
 This is modeled by the locations of the CHA: each location represents the application of a different control law that is appropriate for the situation.
 
 Before defining executions of a CHA, we formally define the abstraction levels at which it is controlled, and consequently at which it is verified.
-A \emph{hierarchical} CHA is a CHA with a chain of partitions defined on its mode set $\modeSet$.
+A \emph{hierarchical} CHA is a CHA with a chain of partitions defined on its location set $\modeSet$, and a corresponding chain of simplified continuous dynamics.
 \begin{defn}[Hierarchical CHA]
-	A \textbf{hierarchical CHA} (HCHA) is a tuple $(\Sys, \Pc)$ where $\Sys$ is a CHA, and $\Pc = \{P_1,P_2,\ldots,P_a\}$ is an ascending chain of partitions of the set $\modeSet$, that is:
+	A \textbf{hierarchical CHA} (HCHA) is a tuple 
+	$(\Sys, \{P_i\}_{i=1}^{a}, \{V_i\}_{i=1}^{a}, \{\Sys_i\}_{i=1}^{a})$ where 
+	$\Sys$ is a CHA, 
+	each $V_i$ in the chain 
+	\[V_a \subset V_{a-1} \subset \ldots \subset V_1 \subset \{1,\ldots,n\}\]
+	is the set of surviving variables at level $i$, and 
+	$\{P_1,P_2,\ldots,P_a\}$ is an ascending chain of partitions of the set $\modeSet$, that is:
 	\begin{itemize}
 		\item For every $i =1,\ldots,a$, $P_i \subset 2^\modeSet$ partitions $\modeSet$: $[\mode] \cap [\mode'] = \emptyset$ for all $[\mode],[\mode'] \in P_i$ and $\cup_{\mode\in \modeSet}[\mode] = \modeSet$
 		\item For all $i<a$, for all $[\mode]\in P_i, \exists [\mode'] \in P_{i+1}$ s.t. $[\mode] \subset [\mode']$ 
 	\end{itemize}
+	Every element of $\{\Sys_i\}_{i=1}^{a}$ is an $n_i$-dimensional CHA 
+	\[\Sys_i = (\stSet_i, \modeSet_i, E_i, Inv_i, \{F_{\mode,i}\}_{\mode \in \modeSet_i}, \guard_i, \reset_i, \funcOut_i, C_i)\]
+	where  $n_i \geq n_{i+1}$,
+	\begin{eqnarray*}
+		\modeSet_i &=& P_i
+		\\
+		(q,q') \in E_i &\text{ iff }& \exists \mode \in q, \mode' \in q' \text{ s.t. } (\mode,\mode') \in E_{i-1}		
+		\\
+		\stSet_i &\subset& \proj{\stSet_{i-1}}{V_i} 
+		\\
+		\guard_i((q,q'),x,u) &=& \proj{\cup \{\guard_{i-1}((\mode,\mode'),x,u) \sut \mode \in q, \mode' \in q'\}}{V_i}
+		\\
+		Inv_i(q) &=& \proj{ \cup_{\mode \in q}Inv_{i-1}(\mode)}{V_i}
+	\end{eqnarray*}
+	
 \end{defn}
 
 Every element $P_i$ of the partition chain represents an abstraction level. 
 An element $[\mode]$ of $P_i$ is a `super-mode' which aggregates several modes of $P_{i-1}$ (namely, the elements of $P_{i-1}$ in the equivalence class $[\mode]$).
-A partition $P_i$ defines a new CHA 
-\[\Sys_i = (\stSet_i, \modeSet_i, E_i, Inv_i, \{F_{\mode,i}\}_{\mode \in \modeSet_i}, \guard_i, \reset_i, \funcOut_i, C_i)
-\]
-in a natural way: for instance 
-\begin{eqnarray}
-\modeSet_i &= P_i 
-\\
-([q],[q']) \in E_i &\text{ iff } \exists \mode \in [q], \mode' \in [q'] \text{ s.t. } (\mode,\mode') \in E_{i-1}
-\\
-Inv_i([q]) &= \cup_{\mode \in [q]}Inv_{i-1}(\mode)
-\\
-F_{[q],i}(x,u) &= \cup_{\mode \in [q]}F_{\mode,i-1}(x,u)
-\\
-\guard_i(e,x,u) & = \cup_{\mode \in [q]}G_{i-1}(e,x,u)
-\end{eqnarray}
-\todo[inline]{must carefully define what happens to the continuous state, what gets dropped, how transitions are checked, etc...}
+The state vector is reduced in dimension by projecting the current state vector (at abstraction level $i-1$) onto the variables $V_i$ of the new level. 
+The set $V_i$ is part of the data of the HCHA.
+The guards and invariants are defined accordingly, by doing the same projection for all guard and invariant conditions on a given transition in $\Sys_{i-1}$.
 
-\todo[inline]{add fig and mention of fig to clarify}
-
-The solutions of regular ODEs are given as functions of the independent variable time $t$.
-Because hybrid automata also include a discrete evolution of the state (namely, via the reset map $\reset$), their solutions will be given as a function of time $t$ and jump number $j$.
-We first define hybrid time domains and arcs.
-\begin{defn}[Hybrid time domains and arcs~\cite{GoebelT_HybridInclusions_Automatica06}]
-	\label{def:hybridarcs}
-	A subset $E \subset \Re_+\times \Ne$ is a \emph{compact hybrid time domain} if 
-	\[E = \bigcup_{j=0}^{J-1}[t_j,t_{j+1}]\times \{j\}\]
-	for some finite increasing sequence of times $0=t_0 \leq t_1 \leq t_2 \leq \ldots \leq t_J$.
-	We say $E$ is a \emph{hybrid time domain} if for all $(T,J) \in E$, 
-	$E \cap ([0,T]\times \{0,\ldots,J\})$ is a compact hybrid time domain.
-	Define
-	$\sup_t E = \sup \{t \sut \exists (t,j) \in E\}$, $\sup_j E = \sup \{j \sut \exists (t,j) \in E\}$,
-	and $E.last = (\sup_t E, \sup_j E)$.
 	
-	A \emph{hybrid arc} $\hstraj$ is a function supported over a hybrid time domain $\hstraj:E \rightarrow \Re^n$, 
-	such that for every $j$, $t \mapsto \hstraj(t,j)$ is absolutely continuous in $t$ over $I_j = \{t: (t,j) \in E\}$;
-	we call $E$ the domain of $\hstraj$ and write it $\dom \hstraj$.
-	The \emph{graph} of a hybrid arc is the set $\gph \hstraj = \{(t,j,\hstraj(t,j)): (t,j) \in \dom \hstraj\}$.
-	Finally, $\dom_t \hstraj = \proj{\dom \hstraj}{\nnreals}$ and $\dom_j \hstraj = \proj{\dom \hstraj}{\Ne}$
-\end{defn}
+\todo[inline]{By requiring successive levels to simply pick surviving variables from the previous level, did we rule out simplification transformations like model order reduction, where the surviving variables have no physical meaning and are certainly not seletions of the previous ones, but rather functions of them? maybe we should allow htat?}
 
-Note that each $I_j$ is an interval.
-%$E.last$ indicates the last element of $E$ under the linear order $(t,j) \leq (t',j')$ iff $t \leq t'$ and $j\leq j'$.
-As observed in \cite{SanfeliceT10automatica}, hybrid time domains are equivalent to hybrid time trajectories used in \cite{LygerosJSZS03tac} to define executions of hybrid automata.
-Output and state trajectories of hybrid automata will be modeled as hybrid arcs. 
+\todo[inline]{add HCHA fig and mention of fig to clarify}
 
-Given a hybrid automaton $\Sys$ and a point $\hsPt_0  = (\mode_0, \stPt_0)$, 
-a \emph{solution} $\hstraj_{\hsPt_0}$ of $\Sys$ (aka \emph{state trajectory}) is given by a hybrid arc $\hstraj$ 
-satisfying the following conditions:
-\begin{enumerate}
-	\item $\hstraj_{h_0}(0,0) = h_0$
-	\item $\hstraj_{h_0}(t,j) = (\mode(t,j),\sttraj(t,j)) \in \hsSet \; \forall (t,j) \in \dom \hstraj$
-	\label{item:explicitLX}
-	\item For each $j$ s.t. $I_j$ has a non-empty interior, 
-	\[\dot{\sttraj}(t,j) = Flow(\mode(t,j),\sttraj(t,j))\]
-	for almost all $t \in I_j$, and $\sttraj(t,j) \in Inv(\mode(t,j))$ for all $t \in \text{int}I_j$.
-	Moreover, 
-	\begin{equation}
-	\label{eq:zeroderiv}
-	\dot{\mode}(t,j) = 0 \; \forall t \notin \{ \inf I_j, \sup I_j\}
-	\end{equation}
-	\label{item:contevolutions}
-	\item For all $j$ s.t. $(t,j) \in \dom \hstraj$, $(t,j+1) \in \dom \hstraj$, it holds that $\sttraj(t,j) \in \guard(\mode_i,\mode_k)$ for some $i,k$,
-	$\sttraj(t, j+1) = \reset(\sttraj(t,j), (\mode_i,\mode_k))$,
-	and $\sttraj(t,j+1) \in Inv(\mode_j)$.
-	\label{item:jumpHA}
-\end{enumerate}
-See Fig.~\ref{fig:HA} for an illustration.
-We consider that the discrete time variable $j$ simply counts the location changes (via \eqref{eq:zeroderiv} and Condition \ref{item:jumpHA}).
-The transition itself between locations takes 0 real time.
-The location changes can only occur when the continuous state $\stPt$ enters a guard set (Condition \ref{item:jumpHA}). 
-The sequence of control locations that the trajectory $\hstraj$ visits is denoted by $\loc(\hstraj)$.
-
-If $\hstraj$ is a state trajectory, then $\funcOut \circ \hstraj: \dom \hstraj \rightarrow \hsSet$ is called an \emph{output trajectory}.
-We assume that $\funcOut$ is such that an output trajectory is also a hybrid arc, supported on the same hybrid time domain as the corresponding state trajectory:
-$\dom \hstraj = \dom \funcOut \circ \hstraj$.
-
-\begin{figure}[tb]
-	\centering
-	\includegraphics[scale=0.3]{figures/HA.pdf}
-	\caption{State trajectory of a hybrid automaton.}
-	\label{fig:HA}
-\end{figure}
-
-\begin{defn}
-	\label{def:solutionsets}
-	$\Sc_\Sys^{T,J}(\hsPt_0)$ will denote the set of solutions of $\Sys$ with initial condition $\hstraj(0,0) = \hsPt_0$ and with $\sup_t(\dom \hstraj) \leq T, \sup_j(\dom \hstraj) \leq J$,
-	while $\Sc_\Sys(\hsPt_0)$ will denote the set of solutions with initial condition $\hstraj(0,0) = \hsPt_0$,
-	and $\Sc_\Sys$ will denote the set of all solutions of $\Sys$.
-	A hybrid automaton is said to be \emph{deterministic} if $\Sc_\Sys^{T,J}(\hsPt_0)$ is a singleton for any $\hsPt_0$.
-\end{defn}
-
-We will use $\hstraj_\hsPt$ to refer to the trajectory starting at $h$.
-The system has a finite set of initial locations $\modeSet_0 \subset \modeSet$ in which it could start, 
-and within each such location $\mode$, a set of initial continuous states $\stSet_\mode \subset \stSet$ in which it could start. 
-Any solution to the system's equations must start there. We denote 
-\[H_0 = \bigcup_{\mode \in \modeSet_0} \{\mode\}\times \stSet_\mode\]
-the hybrid initial set, and write
-\[Init = \bigcup_{\mode \in \modeSet_0}\stSet_\mode \]
+\input{executionsOfHA}
 
 Without the perception conditions $C$, and without the inputs, a CHA is simply a hybrid automaton~\cite{Henzinger96}.
-Some inputs to an autonomous agent are either discrete (taking value in a finite set) or continuous (taking value in a compact subset of $\reals^m$).
 The inputs are used to model two phenomena: 
 first, some inputs will model the output of the perception layer of the system. 
+\todo[inline]{See fig. -- tartan figure from intro -- }
+The perception layer of agent $A$ interprets the perceptible aspects of other agents, i.e. $\funcOut_{A'}(\stPt)$ for $A'\neq A$.
 Depending on the abstraction level at which they are considered, these inputs may be discrete (e.g., a boolean to indicate the presence of a car in the current lane) or continuous (e.g., the estimated position of a pedestrian).
-Second, other inputs will model control commands to the vehicle issued by its own autonomous controllers. E.g. a controller may cause the vehicle to switch modes: such inputs are discrete. 
+Second, other inputs will model control commands to the vehicle issued by its own autonomous controllers. 
+E.g. a controller may cause the vehicle to switch modes: such inputs are discrete. 
 Another controller (at a different level of abstraction) produces a piecewise continuous throttle angle command. Such an input is continuous. 
 
 To model how agents perceive each other at a high level, we consider that certain aspects of an agent can occasionally be perceived by other agents.
@@ -167,16 +102,17 @@ Specifically, if $y(t,j) = (y_1,\ldots,y_p)$, then to listen to $y_k$, $k=1,\ldo
 For example, every agent $A_1$ must transmit its visual appearance - it can't become invisible.
 For another agent $A_2$ to perceive it, $A_2$ must be close enough and with a line of sight to $A_1$. 
 Then 
-\[c(x_2,k) \equiv ||x_1 - x_2 || \leq d \land \forall i\neq 1,2, A_1,A_2,A_i \text{ not aligned}\]
-ß
+\[c(x_2) \equiv ||x_1 - x_2 || \leq d \land \forall i\neq 1,2, A_1,A_2,A_i \text{ not aligned}\]
+
 This model of communication subsumes traditional models of processes that communicate via shared variables, like that in \todo[inline]{insert charon citation}, and generalizes it by imposing conditions under which communication is possible, rather than allow communication at all times.
 
-It should be noted here that the above definitions define a mathematical model of an agent, and not a programming paradigm for autonomous agents. 
-I.e. we are not concerned with how such agents are simulated, or how error conditions (like violation of invariants) are handled in a software package that implements HCHAs.
+It should be noted here that the above definitions define a mathematical model of an agent, and not a programming language for autonomous agents. 
+I.e. we are not concerned with how such agents are simulated, or how interrupts and error conditions (like violation of invariants) are handled in a software package that implements HCHAs.
 The reader interested in such details can consult, for example, the Charon literature.
+\footnote{Charon is a formal programming implementation of hierarchical communicating hybrid automata, although the systems they model have some differences with the ones defined here. Covering these differences is outside the scope of this paper.}
 \todo[inline]{cite charon}
 \todo[inline]{Ptolemy}
-\footnote{Charon is a formal programming implementation of hierarchical communicating hybrid automata, although the systems they model have some differences with our formalism. Covering these differences is outside the scope of this paper.}
+\todo[inline]{Loos on parametrized arch views}
 
 {\it The behaviors of the non-ego agents are described, at the lowest level, via a possibly non-deterministic sequence of reach sets.}
 

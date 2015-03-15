@@ -58,10 +58,10 @@ The set $\agentInstanceSet$ always includes the ego vehicle, i.e., the system wh
 %
 \item $\behavior = \{\behavior_a \sut a \in \agentInstanceSet \setminus \{egoVehicle\}\}$ is a bounded-time behavior description for each of the agent instances.
 Describing the behavior $\behavior_a$ of an agent instance requires us to formally describe an agent. 
-We do so in Section \ref{HCHA} using hierarchical communicating hybrid automata.
+We do so in Section \ref{HCHA}.
 %
-\item $L = \{\mode_0,\ldots,\mode_p\}$ is a finite set of $p \in \Ne$ traffic laws. 
-A law $\mode_i$ is itself a tuple $\mode_i = (\alpha_i,\formula_i)$, 
+\item $\Lc = \{l_0,\ldots,l_p\}$ is a finite set of $p \in \Ne$ traffic laws. 
+A law $l_i$ is itself a tuple $l_i = (\alpha_i,\formula_i)$, 
 where $\alpha_i$ is an element from $\{0,1\}^T$ indicating at every time instant whether the law is active or not, 
 and $\formula_i$ is a temporal logic formula indicating how the law (when it is active) constrains the behavior of the vehicle. 
 I.e. it is a specification on the ego vehicle that must be satisfied. 

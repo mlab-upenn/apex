@@ -9,7 +9,14 @@
 %\tocless\section{hide}
 %\tocless\subsection{subhide}
 
-\newcommand{\st}{\;|\;}
+\usepackage{color,soul}
+\newboolean{HIGHLIGHTCHANGES}
+\setboolean{HIGHLIGHTCHANGES}{true}
+\newcommand \yhl[1]{\ifthenelse{\boolean{HIGHLIGHTCHANGES}}{\textcolor{blue}{#1}}{#1}}
+\newboolean{SHOW_WHAT_IT_WAS}
+\setboolean{SHOW_WHAT_IT_WAS}{true}
+\newcommand \shl[1]{\ifthenelse{\boolean{SHOW_WHAT_IT_WAS}}{\yhl{\sout{#1}}}{}}
+
 \newcommand{\sut}{\;|\;}
 
 % Distances
@@ -171,6 +178,7 @@
 \newcommand{\Uc}{\mathcal{U}}
 \newcommand{\Vc}{\mathcal{V}}
 \newcommand{\Wc}{\mathcal{W}}
+\newcommand{\Xc}{\mathcal{X}}
 %
 \newcommand{\Br}{\mathfrak{B}}
 \newcommand{\Fr}{\mathfrak{F}}
