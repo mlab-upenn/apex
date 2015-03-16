@@ -1,0 +1,50 @@
+
+Before defining executions of a CHA, we formally define the abstraction levels at which it is controlled, and consequently at which it is verified.
+A \emph{hierarchical} CHA is a CHA with a chain of partitions defined on its location set $\modeSet$, and a corresponding chain of simplified continuous dynamics.
+\begin{defn}[Hierarchical CHA]
+	A \textbf{hierarchical CHA} (HCHA) is a tuple 
+	$(\Sys, \{V_i\}_{i=1}^{a}, \{P_i\}_{i=1}^{a}, \{\Sys_i\}_{i=1}^{a})$ where 
+	$\Sys$ is a CHA, 
+	each $V_i$ in the chain 
+	\[V_a \subset V_{a-1} \subset \ldots \subset V_1 \subset \{1,\ldots,n\}\]
+	is the set of \emph{surviving variables} at level $i$, and 
+	$\{P_1,P_2,\ldots,P_a\}$ is an ascending chain of partitions of the set $\modeSet$, that is:
+	\begin{itemize}
+		\item For every $i =1,\ldots,a$, $P_i \subset 2^\modeSet$ partitions $\modeSet$: $[\mode] \cap [\mode'] = \emptyset$ for all $[\mode],[\mode'] \in P_i$ and $\cup_{\mode\in \modeSet}[\mode] = \modeSet$
+		\item For all $i<a$, for all $[\mode]\in P_i, \exists [\mode'] \in P_{i+1}$ s.t. $[\mode] \subset [\mode']$ 
+	\end{itemize}
+	Every element of $\{\Sys_i\}_{i=1}^{a}$ is an $n_i$-dimensional CHA 
+	\[\Sys_i = (\stSet_i, \modeSet_i, E_i, Inv_i, \{F_{q,i}\}_{q \in \modeSet_i}, \guard_i, \reset_i, \funcOut_i, C_i)\]
+	where  $n_i \geq n_{i+1}$,
+	\begin{eqnarray*}
+		\modeSet_i &=& P_i
+		\\
+		(q,q') \in E_i &\text{ iff }& \exists \mode \in q, \mode' \in q' \text{ s.t. } (\mode,\mode') \in E_{i-1}		
+		\\
+		\stSet_i & = & \proj{\stSet_{i-1}}{V_i} 
+		\\
+		\guard_i((q,q'),x,u) &=& \proj{\cup \{\guard_{i-1}((\mode,\mode'),x^\uparrow,u) \sut \mode \in q, \mode' \in q'\}}{V_i}
+		\\
+		Inv_i(q) &=& \proj{ \cup_{\mode \in q}Inv_{i-1}(\mode)}{V_i}
+		\\
+		F_{q,i}(x) &\supset & \proj{\cup_{\mode \in q}F_{\mode,i}(x^\uparrow)}{V_i}
+	\end{eqnarray*}
+	
+\end{defn}
+
+Every element $P_i$ of the partition chain represents an abstraction level. 
+An element $[\mode]$ of $P_i$ is a `super-mode' which aggregates several modes of $P_{i-1}$ (namely, the elements of $P_{i-1}$ in the equivalence class $[\mode]$).
+The state vector is reduced in dimension by projecting the tate vector at abstraction level $i-1$ onto the variables $V_i$ of the new level. 
+The set $V_i$ is part of the data of the HCHA.
+For example, it may consist of the state variables that appear in the guard conditions leading out of the super-modes $q \in \modeSet_i$.
+The guards and invariants are defined accordingly, by doing the same projection for all guard and invariant conditions on a given transition in $\Sys_{i-1}$.
+The new level's dynamics $F_i$ are part of the data of $\Sys_i$. 
+For example, they may be obtained by Model Order Reduction from the dynamics of $\Sys_{i-1}$, or some domain-specific transformation.
+
+\begin{rem}
+	{It would have been possible to define successive abstraction levels to perform more elaborate mappings on the state variable than simple projections, and the rest of the paper would follow with some simple modifications. 
+		We define the HCHA with projections because this is typical of the manner in which different design teams design their systems, with attention paid to the quantities of interest at their level, while assuming that lower levels somehow provide them with readings (or computations) of this data.}
+\end{rem}
+
+
+\todo[inline]{add HCHA fig and mention of fig to clarify}

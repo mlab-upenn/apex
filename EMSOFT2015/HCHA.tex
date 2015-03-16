@@ -37,50 +37,11 @@ As stated earlier, the state $\stPt$ captures all the relevant information about
 It is widely recognized now that different navigation situations call for different control laws.
 \todo[inline]{cite}
 This is modeled by the locations of the CHA: each location represents the application of a different control law that is appropriate for the situation.
-
-Before defining executions of a CHA, we formally define the abstraction levels at which it is controlled, and consequently at which it is verified.
-A \emph{hierarchical} CHA is a CHA with a chain of partitions defined on its location set $\modeSet$, and a corresponding chain of simplified continuous dynamics.
-\begin{defn}[Hierarchical CHA]
-	A \textbf{hierarchical CHA} (HCHA) is a tuple 
-	$(\Sys, \{P_i\}_{i=1}^{a}, \{V_i\}_{i=1}^{a}, \{\Sys_i\}_{i=1}^{a})$ where 
-	$\Sys$ is a CHA, 
-	each $V_i$ in the chain 
-	\[V_a \subset V_{a-1} \subset \ldots \subset V_1 \subset \{1,\ldots,n\}\]
-	is the set of surviving variables at level $i$, and 
-	$\{P_1,P_2,\ldots,P_a\}$ is an ascending chain of partitions of the set $\modeSet$, that is:
-	\begin{itemize}
-		\item For every $i =1,\ldots,a$, $P_i \subset 2^\modeSet$ partitions $\modeSet$: $[\mode] \cap [\mode'] = \emptyset$ for all $[\mode],[\mode'] \in P_i$ and $\cup_{\mode\in \modeSet}[\mode] = \modeSet$
-		\item For all $i<a$, for all $[\mode]\in P_i, \exists [\mode'] \in P_{i+1}$ s.t. $[\mode] \subset [\mode']$ 
-	\end{itemize}
-	Every element of $\{\Sys_i\}_{i=1}^{a}$ is an $n_i$-dimensional CHA 
-	\[\Sys_i = (\stSet_i, \modeSet_i, E_i, Inv_i, \{F_{\mode,i}\}_{\mode \in \modeSet_i}, \guard_i, \reset_i, \funcOut_i, C_i)\]
-	where  $n_i \geq n_{i+1}$,
-	\begin{eqnarray*}
-		\modeSet_i &=& P_i
-		\\
-		(q,q') \in E_i &\text{ iff }& \exists \mode \in q, \mode' \in q' \text{ s.t. } (\mode,\mode') \in E_{i-1}		
-		\\
-		\stSet_i &\subset& \proj{\stSet_{i-1}}{V_i} 
-		\\
-		\guard_i((q,q'),x,u) &=& \proj{\cup \{\guard_{i-1}((\mode,\mode'),x,u) \sut \mode \in q, \mode' \in q'\}}{V_i}
-		\\
-		Inv_i(q) &=& \proj{ \cup_{\mode \in q}Inv_{i-1}(\mode)}{V_i}
-	\end{eqnarray*}
-	
-\end{defn}
-
-Every element $P_i$ of the partition chain represents an abstraction level. 
-An element $[\mode]$ of $P_i$ is a `super-mode' which aggregates several modes of $P_{i-1}$ (namely, the elements of $P_{i-1}$ in the equivalence class $[\mode]$).
-The state vector is reduced in dimension by projecting the current state vector (at abstraction level $i-1$) onto the variables $V_i$ of the new level. 
-The set $V_i$ is part of the data of the HCHA.
-The guards and invariants are defined accordingly, by doing the same projection for all guard and invariant conditions on a given transition in $\Sys_{i-1}$.
-
-	
-\todo[inline]{By requiring successive levels to simply pick surviving variables from the previous level, did we rule out simplification transformations like model order reduction, where the surviving variables have no physical meaning and are certainly not seletions of the previous ones, but rather functions of them? maybe we should allow htat?}
-
-\todo[inline]{add HCHA fig and mention of fig to clarify}
+\input{abstractionLevelsOfHCHA}
 
 \input{executionsOfHA}
+
+\input{exampleHCHA}
 
 Without the perception conditions $C$, and without the inputs, a CHA is simply a hybrid automaton~\cite{Henzinger96}.
 The inputs are used to model two phenomena: 
@@ -118,7 +79,3 @@ The reader interested in such details can consult, for example, the Charon liter
 
 {\it HCHA can be translated to various other formalisms. We consider the case of timed automata, and of ODEs (i.e. dynamical systems).}
 
-\begin{exmp}[Lane change continued]
-	We model the lane change scenario using HCHA as follows
-	\todo[inline]{must show how the 4 agent types are modeled with this}
-	\end{exmp}
