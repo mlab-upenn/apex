@@ -27,7 +27,7 @@ A \emph{hierarchical} CHA is a CHA with a chain of partitions defined on its loc
 		\\
 		\stSet_i & = & \proj{\stSet_{i-1}}{V_i} 
 		\\
-		\guard_i((q,q'),x,u) &=& \proj{\cup_{(\mode,\mode') \in q\times q'} \guard_{i-1}((\mode,\mode'),x^\uparrow,u) }{V_i}
+		\guard_i((q,q')) &=& \proj{\cup_{(\mode,\mode') \in q\times q'} \guard_{i-1}((\mode,\mode')) }{V_i}
 		\\
 		Inv_i(q) &=& \proj{ \cup_{\mode \in q}Inv_{i-1}(\mode)}{V_i}
 		\\
@@ -38,6 +38,8 @@ A \emph{hierarchical} CHA is a CHA with a chain of partitions defined on its loc
 		\forall x \in \stSet_{i-1},\; \proj{x}{V_i} &=& \proj{\reset_{i-1}(e,x)}{V_i}
 		\\
 		C_i &=& C
+		\\
+		\proj{x}{V_i} &=& \proj{\reset_{i-1}(e,x)}{V_i} \forall e \in E_{i-1},x \in \guard_{i-1}(e)
 	\end{eqnarray*}
 	
 \end{defn}

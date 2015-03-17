@@ -1,17 +1,61 @@
 \begin{thm}
 	Let $(\Sys,\Vc,\Pc,\{\Sys_i\})$ be a HCHA.
-	Let $x \in \Sc_\Sys$ be a solution of CHA $\Sys$.
+	Let $\hstraj =(\mode,\sttraj) \in \Sc_{\Sys}$ be a solution of CHA $\Sys$ with continuous part $\sttraj$.
 	Then for every $1 \leq i \leq a$, 
-	there exists a solution $x^{(i)} \in \Sc_{\Sys_i}$ such that $x^{(i)} = \proj{x}{V_i}$.	
+	there exists a solution 
+	$\hstraj^{(i)} = (q,\sttraj^{(i)}) \in \Sc_{\Sys_i}$ 
+	such that $\sttraj^{(i)} = \proj{\sttraj}{V_i}$.
+	That is, for every $(t,j) \in \dom \hstraj$, there exists $(t,j') \in \dom \hstraj^{(i)}$
+	s.t. $\mode(t,j) \in q(t,j')$
+	and	$\sttraj^{(i)}(t,j) = \proj{\sttraj(t,j')}{V_i}$.
 \end{thm}
 
-
+\begin{proof}
+	We prove this for $i=1$. The general case follows by induction.
+	Fix $i=1$, and write $V$ for $V_i$ in this proof.
+	Let $\sttraj$ be as stated, and define 
+	$y: \dom \sttraj \rightarrow \reals^{n_i}$ by 
+	$y(t,j) = \proj{\sttraj(t,j)}{V}$ for all $(t,j) \in \dom \sttraj$.
+	We will construct from $y$ a hybrid arc that satisfies the conditions of a solution of $\Sys_i$.
+	
+	Let $I_j$ be an interval in $\dom \hstraj$ with non-empty interior, and take $t \in I_j$ s.t. 
+	$\dot{\sttraj}(t,j) \in F_\mode(\sttraj(t,j))$. 
+	Then $\dot{y}(t,j) = d(\proj{\sttraj(t,j)}{V})/dt = \proj{\dot{\sttraj}(t,j)}{V} \in \proj{F_\mode(\sttraj(t,j))}{V} \subset F_q(y^{\uparrow}(t,j))$.	
+	For all $t \in \text{int}I_j$, $y(t,j) = \proj{\sttraj(t,j)}{V} \in \proj{Inv(\mode)}{V} = Inv(q)$.
+	Moreover, for all $t$ different from the endpoints of $I_j$, $q(t,j) = [\mode]$ and so $\dot{q}(t,j) =0$.
+	Thus condition 3 is satisfied for $y$.
+	
+	Now consider the jumps: let $t_r = \sup I_J$. 
+	If the jump at $(t_r,j)$ leads from $\mode$ to a location $\mode'$ such that $[\mode']$ is not $q$, then it can be shown that this is also a jump for $y$.
+	However, if the transition is \emph{internal} to mode $q$, i.e. 
+	\[[\mode]=[\mode']\]
+	then this violates condition 4 since $y(t_r,j)$ is not in a guard set of $\Sys_i$.
+	Moreover, because of the reset that occurs at $(t_r,j)$, if $\proj{\sttraj(t_r,j+1)}{V}\neq \proj{\sttraj(t_r,j)}{V}$, then $y$ is not absolutely continuous as a function of time within each mode.
+	To get around these difficulties, we invoke the last property defining an abstraction chain.
+	Namely, that the surviving variables at each level are not affected by resets on internal transitions.
+	This removes the second difficulty above since now $y(t_r,j+1) = y(t_r,j)$.
+	
+	We define $\sttraj^{(i)}$ by erasing the internal transitions from the domain of $y$.
+	Let $\Jc$ be the set of indices of internal transitions, that is, $\Jc = \{j \sut \exists t.(t,j) \in \dom \sttraj, (t,j+1) \in \dom \sttraj, [\mode(t,j)]=[\mode(t,j+1)]\}$.		
+	
+	\todo[inline]{TBC}
+\end{proof}
 
 \todo[inline]{initial points}
 
 \begin{thm}
 	Let $(\Sys,\Vc,\Pc,\{\Sys_i\})$ be a HCHA.
-	Let $x^{(i)} \in \Sc_{\Sys_i}$ be a solution of CHA $\Sys_i$ for some $i$.
-	Then either there exists $x \in \Sc_\Sys$ s.t. $x^{(i)} = \proj{x}{V_i}$,
-	or $x^{(i)}$ can be refined to such a trajectory in at most $|\modeSet|\cdot n$ steps.
+	Let $y \in \Sc_{\Sys_i}$ be a solution of CHA $\Sys_i$ for some $i$.
+	Then either there exists $\sttraj \in \Sc_\Sys$ s.t. $y} = \proj{\sttraj}{V_i}$,
+	or $y$ can be refined to such a trajectory in at most $|\modeSet|\cdot n$ steps,
+	where $\modeSet$ is the location set of $\Sys$ and $n$ is its dimension.
 \end{thm}
+
+\begin{proof}
+	Write $y$ for Assume that a solution $\sttraj$ as stated does not exist.
+	There are two reasons why this might happen:
+	\begin{itemize}
+		\item Either, iwithin the same $I_j$ in the domain of $y$, $\dot{y}$ obeys two different dynamics $F_\mode$ and $F_{\mode'}$ for $\mode,\mode' \in q \in \modeSet_i$.
+		In general, this can not be produced by a $\Sys$ trajectory.\footnote{}
+	\end{itemize}
+\end{proof}
