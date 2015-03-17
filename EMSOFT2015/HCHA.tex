@@ -25,7 +25,7 @@ where
 	\item $E \subseteq \modeSet \times \modeSet$ is the set of location transitions (a.k.a. switches, or jumps).
 	\item $\guard : E \times \stSet \times \inpSet \rightarrow 2^\stSet$ is the guard condition that enables a location transition. 
 	Namely, the system switches between $\mode _i$ and $\mode _j$ when the state $\stPt$ is in $\guard((\mode_i,\mode _j),x,u)$.
-	\item $\reset : \modeSet \times \stSet \rightarrow \modeSet \times \stSet $ is a reset map that, given a transition $e = (\mode _i,\mode _j) \in E$ and a point $x$ on the guard $\guard(e)$, maps $x$ to a point $x^+$ in the invariant set of the next location $\mode_j$:
+	\item $\reset : E \times \stSet \rightarrow \modeSet \times \stSet $ is a reset map that, given a transition $e = (\mode _i,\mode _j) \in E$ and a point $x$ on the guard $\guard(e)$, maps $x$ to a point $x^+$ in the invariant set of the next location $\mode_j$:
 	\[\reset: (x,(\mode _i,\mode _j)) \rightarrow (\mode_j,x^+)\;, x^+ \in Inv(\mode_j)\] 
 	\item $\funcOut: \reals^n \rightarrow \reals^p$ is an output function,
 	\item $C = \{c_1,\ldots,c_p\}$ is a set of $p \in \Ne$ perception conditions (defined below).	
@@ -37,35 +37,16 @@ As stated earlier, the state $\stPt$ captures all the relevant information about
 It is widely recognized now that different navigation situations call for different control laws.
 \todo[inline]{cite}
 This is modeled by the locations of the CHA: each location represents the application of a different control law that is appropriate for the situation.
-\input{abstractionLevelsOfHCHA}
 
 \input{executionsOfHA}
 
 \input{exampleHCHA}
 
-Without the perception conditions $C$, and without the inputs, a CHA is simply a hybrid automaton~\cite{Henzinger96}.
-The inputs are used to model two phenomena: 
-first, some inputs will model the output of the perception layer of the system. 
-\todo[inline]{See fig. -- tartan figure from intro -- }
-The perception layer of agent $A$ interprets the perceptible aspects of other agents, i.e. $\funcOut_{A'}(\stPt)$ for $A'\neq A$.
-Depending on the abstraction level at which they are considered, these inputs may be discrete (e.g., a boolean to indicate the presence of a car in the current lane) or continuous (e.g., the estimated position of a pedestrian).
-Second, other inputs will model control commands to the vehicle issued by its own autonomous controllers. 
-E.g. a controller may cause the vehicle to switch modes: such inputs are discrete. 
-Another controller (at a different level of abstraction) produces a piecewise continuous throttle angle command. Such an input is continuous. 
+\input{abstractionLevelsOfHCHA}
 
-To model how agents perceive each other at a high level, we consider that certain aspects of an agent can occasionally be perceived by other agents.
-The simplest such aspect is the agent's visual appearance.
-Formally, associated to an agent is a function $\funcOut:\reals^n \rightarrow \reals^p$.
-At each time instant $(t,j)$, the agent broadcasts $\funcOut(\stPt(t,j))$.
-Not every other agent can perceive this broadcast.
-Given two agents $A_1$ and $A_2$ in the same scenario, with agent $A_1$ broadcasting $y = f(x)$, agent $A_2$ must meet certain conditions on its state to be able to receive (and act upon) the information broadcast by $A_1$.
-Specifically, if $y(t,j) = (y_1,\ldots,y_p)$, then to listen to $y_k$, $k=1,\ldots,p$, the state $x_2(t,j)$ of $A_2$ must satisfy some boolean `listening' condition $c(x_2,k)$.
-For example, every agent $A_1$ must transmit its visual appearance - it can't become invisible.
-For another agent $A_2$ to perceive it, $A_2$ must be close enough and with a line of sight to $A_1$. 
-Then 
-\[c(x_2) \equiv ||x_1 - x_2 || \leq d \land \forall i\neq 1,2, A_1,A_2,A_i \text{ not aligned}\]
+\input{thmAbstractionLevels}
 
-This model of communication subsumes traditional models of processes that communicate via shared variables, like that in \todo[inline]{insert charon citation}, and generalizes it by imposing conditions under which communication is possible, rather than allow communication at all times.
+\input{inputsPerceptionConditions}
 
 It should be noted here that the above definitions define a mathematical model of an agent, and not a programming language for autonomous agents. 
 I.e. we are not concerned with how such agents are simulated, or how interrupts and error conditions (like violation of invariants) are handled in a software package that implements HCHAs.
@@ -74,8 +55,6 @@ The reader interested in such details can consult, for example, the Charon liter
 \todo[inline]{cite charon}
 \todo[inline]{Ptolemy}
 \todo[inline]{Loos on parametrized arch views}
-
-{\it The behaviors of the non-ego agents are described, at the lowest level, via a possibly non-deterministic sequence of reach sets.}
 
 {\it HCHA can be translated to various other formalisms. We consider the case of timed automata, and of ODEs (i.e. dynamical systems).}
 

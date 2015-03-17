@@ -68,6 +68,8 @@ It is clearly possible to specify these properties using LTL operators (always a
 %
 %Interaction between model checkers and other verif tools: CEGAR, matthias and CMU guy, spaceex.
 %
+% HASTEN
+%
 %Other semi-formal verif: staliro, breach, apx bisimulations.
 
 \subsection{Notation}
@@ -75,4 +77,8 @@ We denote the set of integers including 0 with $\Ne$.
 Given a subset $S$ of the reals, $S^* = S \setminus \{0\}$ and $S_+ = S \cap [0,\infty)$,
 while $S_+^* = S \cap (0,\infty)$.
 A \emph{discrete} variable takes values in a finite set, and a \emph{continuous} variable takes values in a closed subset of $\reals^n$ for some $n$.
-Given two sets $A$ and $B$ and $(a,b) \in A\times B$, $\proj{(a,b)}{A} = a$. Given $x \in \reals^n$ and $m < n$, $\proj{x}{\reals^m}^\uparrow = x$.
+Given a vector $x = (x_1,\ldots,x_n) \in \reals^n$, and a set of indices $V \subset \{1,\ldots,n\}$, $\proj{x}{V}$ is the projection of $x$ onto the subspsace whose dimensions are indexed by $V$. 
+E.g. with $x = (x_1,x_2,x_3,x_4)$ and $V=\{1,3\}$, $\proj{x}{V} = (x_1,x_3)$.
+We also define $x^\uparrow \defeq \proj{x}{V}^{-1}$ when $V$ is clear from the context.
+A set-valued map $F: \reals^n \rightrightarrows \reals^m$ maps each $x$ in its domain to a subset of its range.
+For a set $K \subset \reals^n$, we abuse notation by writing $F(K)$ for $\cup_{x\in K}F(x)$.

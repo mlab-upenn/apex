@@ -15,7 +15,7 @@ We first define hybrid time domains and arcs.
 	A \emph{hybrid arc} $\hstraj$ is a function supported over a hybrid time domain $\hstraj:E \rightarrow \Re^n$, 
 	such that for every $j$, $t \mapsto \hstraj(t,j)$ is absolutely continuous in $t$ over $I_j = \{t: (t,j) \in E\}$;
 	we call $E$ the domain of $\hstraj$ and write it $\dom \hstraj$.
-	The \emph{graph} of a hybrid arc is the set $\gph \hstraj = \{(t,j,\hstraj(t,j)): (t,j) \in \dom \hstraj\}$.
+	%The \emph{graph} of a hybrid arc is the set $\gph \hstraj = \{(t,j,\hstraj(t,j)): (t,j) \in \dom \hstraj\}$.
 	Finally, $\dom_t \hstraj = \proj{\dom \hstraj}{\nnreals}$ and $\dom_j \hstraj = \proj{\dom \hstraj}{\Ne}$
 \end{defn}
 
@@ -32,13 +32,13 @@ satisfying the following conditions:
 	\item $\hstraj_{h_0}(t,j) = (\mode(t,j),\sttraj(t,j)) \in \hsSet \; \forall (t,j) \in \dom \hstraj$
 	\label{item:explicitLX}
 	\item For each $j$ s.t. $I_j$ has a non-empty interior, 
-	\[\dot{\sttraj}(t,j) = Flow(\mode(t,j),\sttraj(t,j))\]
+	\[\dot{\sttraj}(t,j) \in F_{\mode(t,j)}(\sttraj(t,j))\]
 	for almost all $t \in I_j$, and $\sttraj(t,j) \in Inv(\mode(t,j))$ for all $t \in \text{int}I_j$.
 	Moreover, 
-	\begin{equation}
+	\begin{equation*}
 	\label{eq:zeroderiv}
 	\dot{\mode}(t,j) = 0 \; \forall t \notin \{ \inf I_j, \sup I_j\}
-	\end{equation}
+	\end{equation*}
 	\label{item:contevolutions}
 	\item For all $j$ s.t. $(t,j) \in \dom \hstraj$, $(t,j+1) \in \dom \hstraj$, it holds that $\sttraj(t,j) \in \guard(\mode_i,\mode_k)$ for some $i,k$,
 	$\sttraj(t, j+1) = \reset(\sttraj(t,j), (\mode_i,\mode_k))$,
