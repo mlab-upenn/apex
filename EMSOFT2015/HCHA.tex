@@ -1,78 +1,81 @@
 \subsection{Communicating hierarchical hybrid \\automata}
 \label{HCHA}
-{\it As noted in the introduction, the execution of an autonomous plan involves many levels of abstraction. 
-The verification must cover all these levels.}
+{\it As noted in the introduction, the execution of an autonomous plan involves many levels of abstraction. The verification must cover all these levels.}
 
-{\it We use the formalism of hierarchical communicating hybrid automata (HCHA) to model agents in the scenario. }
-\todo[inline]{do we want to state that only ego vehicle is HCHA, the rest are given as behaviors?}
-
+{\it We use the formalism of hierarchical  communicating hybrid automata (HCHA) to model agents in the scenario. }
 We start with a few basic elements:
-an agent $A$ (of one of the types described above) has a state vector $x \in \reals^{n_A}$.
-The state includes all information of relevance to the system designers: for the ego vehicle, this will typically include position and velocity, but also fuel combustion rate and wall-wetting effects if needed.
-For a traffic light (which is an agent of type \texttt{trafficSignage}), the state might include the current active light and a clock that measures the delay between light switches.
+an agent (of one of the types described above) has a state vector $\stPt \in \reals^n$.
+(Different agents may have different dimensions.)
+The state includes all information of relevance to the system designers.%: for the ego vehicle, this will typically include position and velocity, but also fuel combustion rate and wall-wetting effects if needed.
+%For a traffic light (which is an agent of type \texttt{trafficSignage}), the state might include the current active light and a clock that measures the delay between light switches.
 An agent is modeled as a \emph{communicating} hybrid automaton.
 
 \begin{defn}[Communicating hybrid automaton]
-A (driven) \textbf{communicating hybrid automaton} (CHA) with inputs in $\inpSet$ 
-is a tuple $\Hc = (X, Q, E, Inv, F, G, Re, \funcOut, C)$
+	\label{def:CHA}
+A driven \textbf{communicating hybrid automaton} (CHA) $\Sys$ with inputs in $\inpSet$ 
+is a tuple 
+\[\Sys = (\stSet, \modeSet, E, Inv, \{F_\mode\}_{\mode \in \modeSet}, \guard, \reset, \funcOut, C)\]
 where 
-\begin{itemize}\
-\item $X \subseteq \Re^n$ is the state space of the system, 
-\item $Q$ is the set of control modes (a.k.a `locations'), 
-\item $E \subseteq Q \times Q$ is the set of control switches, 
-\item $Inv : Q \rightarrow 2^X$ assigns an invariant set of the dynamics to each location, 
-\item $F : Q \times X \times \inpSet \rightarrow \Re^n$ defines the time derivative of the continuous part of the state, 
-\item $G : E \times X \rightarrow 2^X$ is the guard condition that enables a control switch $e \in E$,
-\item $Re : X \times E \rightarrow X \times Q$ is a reset map that resets the state with every control switch,
-\item $\funcOut: \reals^n \rightarrow \reals^p$ is an output function,
-\item $C = \{c_1,\ldots,c_p\}$ is a set of $p$ listening conditions (defined below)
+\begin{itemize}
+	\item $\stSet \subseteq \Re^n$ is the continuous state space of the system.
+	\item $\modeSet \subset \Ne$ is a finite set of control locations that the system switches through. 
+	\item $\hsSet \triangleq \modeSet \times \stSet$ is then the hybrid state space.
+	\item $F_\mode : \stSet \times \inpSet \rightarrow \Re^n$ defines a differential inclusion governing the evolution of the state in location $\mode$: $\dot{\stPt} \in F_\mode(\stPt,u)$. 
+	\item $Inv : \modeSet \rightarrow 2^\stSet$ defines an invariant condition on the state while in location $\mode$.
+	\item $E \subseteq \modeSet \times \modeSet$ is the set of location transitions (a.k.a. switches, or jumps).
+	\item $\guard : E \times \stSet \times \inpSet \rightarrow 2^\stSet$ is the guard condition that enables a location transition. 
+	Namely, the system switches between $\mode _i$ and $\mode _j$ when the state $\stPt$ is in $\guard((\mode_i,\mode _j),x,u)$.
+	\item $\reset : \modeSet \times \stSet \rightarrow \modeSet \times \stSet $ is a reset map that, given a transition $e = (\mode _i,\mode _j) \in E$ and a point $x$ on the guard $\guard(e)$, maps $x$ to a point $x^+$ in the invariant set of the next location $\mode_j$:
+	\[\reset: (x,(\mode _i,\mode _j)) \rightarrow (\mode_j,x^+)\;, x^+ \in Inv(\mode_j)\] 
+	\item $\funcOut: \reals^n \rightarrow \reals^p$ is an output function,
+	\item $C = \{c_1,\ldots,c_p\}$ is a set of $p \in \Ne$ perception conditions (defined below).	
 \end{itemize}
-  
-Let $H = Q \times X$ denote the state space of the hybrid automaton $\Hc$.
-	\end{defn}
-	
-\todo[inline]{execution semantics}
+\end{defn}
 
-%Formally, the semantics of a hybrid automaton are given in terms of generalized or timed transition systems \cite{Henzinger96}.
-%For the purposes of this paper, we define a {\it trajectory} $\hstraj_{h_0}$ starting from a point $h_0 \in H$ to be a function $\hstraj_{h_0} : \Re_+ \times \Ne \rightarrow H$
-%defined by: $\hstraj_{h_0}(t) = (\mode(t,j), \sttraj_{h_0}(t,j))$, where $\mode(t,j)$ is the location at time $(t,j)$, and $\sttraj_{h_0}(t,j)$ is the continuous state at time $(t,j)$.
-	
-The differential equations in each mode of the CHA model the continuous-time closed-loop behavior of the low-level systems, i.e., the mechanical systems of the car.
-The modes themselves model the application of different control laws. 
-The input $\inpPt \in \inpSet$ is an analytical artifact that is applicable only to the autonomous agent.
-It models external disturbances that are not due to other agents, e.g., the effect of weather conditions like low visibility. 
+The differential inclusion $F_\mode$ in each location of the CHA models the continuous-time closed-loop behavior of the low-level controlled systems, i.e., the electromechanical systems of the car such as the powertrain.
+As stated earlier, the state $\stPt$ captures all the relevant information about the agent's dynamics. 
+It is widely recognized now that different navigation situations call for different control laws.
+\todo[inline]{cite}
+This is modeled by the locations of the CHA: each location represents the application of a different control law that is appropriate for the situation.
+\input{abstractionLevelsOfHCHA}
 
-Without the communication conditions $C$, a CHA is simply a hybrid automaton.
-To model how agents perceive each other at a high level, we consider that an agent will broadcast certain information about its state that other agents can occasionally listen to.
-Formally, at each time instant $(t,j)$, the agent broadcasts $\funcOut(x(t,j))$.
-Not every other agent can listen to the broadcast, or listen to it all the time.
+\input{executionsOfHA}
+
+\input{exampleHCHA}
+
+Without the perception conditions $C$, and without the inputs, a CHA is simply a hybrid automaton~\cite{Henzinger96}.
+The inputs are used to model two phenomena: 
+first, some inputs will model the output of the perception layer of the system. 
+\todo[inline]{See fig. -- tartan figure from intro -- }
+The perception layer of agent $A$ interprets the perceptible aspects of other agents, i.e. $\funcOut_{A'}(\stPt)$ for $A'\neq A$.
+Depending on the abstraction level at which they are considered, these inputs may be discrete (e.g., a boolean to indicate the presence of a car in the current lane) or continuous (e.g., the estimated position of a pedestrian).
+Second, other inputs will model control commands to the vehicle issued by its own autonomous controllers. 
+E.g. a controller may cause the vehicle to switch modes: such inputs are discrete. 
+Another controller (at a different level of abstraction) produces a piecewise continuous throttle angle command. Such an input is continuous. 
+
+To model how agents perceive each other at a high level, we consider that certain aspects of an agent can occasionally be perceived by other agents.
+The simplest such aspect is the agent's visual appearance.
+Formally, associated to an agent is a function $\funcOut:\reals^n \rightarrow \reals^p$.
+At each time instant $(t,j)$, the agent broadcasts $\funcOut(\stPt(t,j))$.
+Not every other agent can perceive this broadcast.
 Given two agents $A_1$ and $A_2$ in the same scenario, with agent $A_1$ broadcasting $y = f(x)$, agent $A_2$ must meet certain conditions on its state to be able to receive (and act upon) the information broadcast by $A_1$.
 Specifically, if $y(t,j) = (y_1,\ldots,y_p)$, then to listen to $y_k$, $k=1,\ldots,p$, the state $x_2(t,j)$ of $A_2$ must satisfy some boolean `listening' condition $c(x_2,k)$.
 For example, every agent $A_1$ must transmit its visual appearance - it can't become invisible.
 For another agent $A_2$ to perceive it, $A_2$ must be close enough and with a line of sight to $A_1$. 
 Then 
-\[c(x_2,k) \equiv ||x_1 - x_2 || \leq d \land \forall i\neq 1,2, A_1,A_2,A_i \text{ not aligned}\]
-\todo[inline]{In the future, model the effect of sensory overload to study acquisition of info. I.e. subscribing to a channel has a control cost.}
-This model of communication subsumes traditional models of processes that communicate via shared variables, like that in \cite{AnandFHJL_GeneratingReliableCode10}, and generalizes it by imposing conditions under which communication is possible, rather than allow communication at all times.
+\[c(x_2) \equiv ||x_1 - x_2 || \leq d \land \forall i\neq 1,2, A_1,A_2,A_i \text{ not aligned}\]
 
-As a matter of practicality, CHAs will be represented as \emph{hierarchical} CHAs. 
-A hierarchical CHA is a CHA with a chain of partitions defined on its mode set $Q$.
-\begin{defn}[Hierarchical CHA]
-	A \textbf{hierarchical CHA} (HCHA) is a tuple $(\Hc, \Pc)$ where $\Hc$ is a CHA, and $\Pc = \{P_1,P_2,\ldots,P_a\}$ is an ascending chain of partitions of the set $Q$, that is:
-	\begin{itemize}
-		\item For every $i =1,\ldots,a$, $P_i \subset 2^Q$ partitions $Q$: $[q] \cap [q'] = \emptyset$ for all $[q],[q'] \in P_i$ and $\cup_{q\in Q}[q] = Q$
-		\item For all $i<a$, for all $[q]\in P_i, \exists [q'] \in P_{i+1}$ s.t. $[q] \subset [q']$ 
-	\end{itemize}
-\end{defn}
+This model of communication subsumes traditional models of processes that communicate via shared variables, like that in \todo[inline]{insert charon citation}, and generalizes it by imposing conditions under which communication is possible, rather than allow communication at all times.
 
-\todo[inline]{Charon: make sure that the HCHA is implemented in Charon (or something close)}
+It should be noted here that the above definitions define a mathematical model of an agent, and not a programming language for autonomous agents. 
+I.e. we are not concerned with how such agents are simulated, or how interrupts and error conditions (like violation of invariants) are handled in a software package that implements HCHAs.
+The reader interested in such details can consult, for example, the Charon literature.
+\footnote{Charon is a formal programming implementation of hierarchical communicating hybrid automata, although the systems they model have some differences with the ones defined here. Covering these differences is outside the scope of this paper.}
+\todo[inline]{cite charon}
 \todo[inline]{Ptolemy}
+\todo[inline]{Loos on parametrized arch views}
 
 {\it The behaviors of the non-ego agents are described, at the lowest level, via a possibly non-deterministic sequence of reach sets.}
 
 {\it HCHA can be translated to various other formalisms. We consider the case of timed automata, and of ODEs (i.e. dynamical systems).}
 
-\begin{exmp}[Lane change continued]
-	We model the lane change scenario using HCHA as follows
-	\todo[inline]{must show how the 4 agent types are modeled with this}
-	\end{exmp}

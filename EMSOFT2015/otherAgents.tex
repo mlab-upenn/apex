@@ -1,0 +1,49 @@
+\section{Other agents}
+\label{otherAgents}
+
+{\it In this section we give the model of a \texttt{road} agent, and specialize the HCHA to other (non-ego)  \texttt{vehicle}s and \texttt{pedesrian}s.}
+
+\begin{defn}
+	\label{def:road}
+	A \textbf{road agent instance} is given by a tuple $(R, G_1,\ldots, G_r)$ where 
+	$R$ is a subset of $\reals^2$
+	and $G_i = (V_i,E_i)$ is a directed graph for which there exists a partition $R_i$ of $R$ and a bijection $b_i: V_i \rightarrow R_i$ between $R_i$ and $V_i$ such that
+	\begin{itemize}
+		\item  $(v,v') \in E_i$ iff $b_i(v)\cap b_i(v') \neq \emptyset$
+		\item $R_i$ is a refinement of $R_{i+1}$
+	\end{itemize}
+	\end{defn}
+
+The direction of each edge in $G_i$ is part of the road agent's data.
+The set $R$ is the most accurate representation of the road network in a given scenario.
+The successive partitions $R_i$ represent coarser and coarser representations of the road, and their operational view that is used by controllers is given by the graphs $G_i$.
+
+{\it For verifying the autonomous agent, only the perceptible behavior of other agents is important, not their internal structure.}
+
+{\it The behavior of other agents is part of the scenario description.}
+
+For the other vehicles and pedestrians, the basic perceptible external behavior is their position at given moments in time. 
+\begin{defn}
+	\label{def:otherAgentsBehavior}
+	Let $s$ be a scenario, and let $A$ be an agent instance of type \texttt{vehicle, pedestrian} in $s$.
+	The \textbf{basic HCHA of $A$} takes the form 
+	\[\Sys = (\reals^2, \{1\}, \emptyset, \reals^2, \{F_1\}, \emptyset, Id, Id, \{c\})\]
+	where $c(x) = \|x-x_A\| \leq d$ for some $d > 0$.
+	\end{defn}
+
+The basic HCHA for pedestrians and other vehicles simply models how their position evolves. 
+Notice that because the dynamics are given by an inclusion rather than an equation, other agents' behavior is nondeterministic and their position at each moment in time is a non-singleton.
+We denote that set by $X(t,0)$
+\[X(t,0) \defeq \{x(t) \sut x \text{ is a solution of the inclusion}.\}\]
+(The $j$ parameter always equals 0 since the basic HCHA only has one mode.)
+This models the uncertainty about their behavior.
+
+This model is sufficient for basic safety and correctness verification, and for imposing minimally reasonable restrictions on their behavior. 
+For example, we can impose that a vehicle never leaves the road by making the velocity vectors $F(x)$ turn inward at road edges.
+Because their position is perceptible, the ego vehicle can formulate safety as the property that it never intersect their position set.
+If needed, this basic HCHA can be enriched to model more sophisticated sensing by the ego vehicle (e.g. tracking of shape), or different behavior of the other agents as required by the scenario.
+Finally, note that in practice (e.g., in a software implementation) it may be more practical to directly give the trajectory $X(\cdot,0)$ of an agent rather than the dynamics $\dot{x} \in F(x)$. 
+It might also be necessary to give that trajectory in discrete time (e.g. as a sequence of reach sets.)
+This doesn't affect the verification algorithms.
+
+Examples of traffic signage modeling will be covered in the examples.
