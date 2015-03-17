@@ -1,0 +1,23 @@
+Without the perception conditions $C$, and without the inputs, a CHA is simply a hybrid automaton~\cite{Henzinger96}.
+The inputs are used to model two phenomena: 
+first, some inputs will model the output of the perception layer of the system. 
+\todo[inline]{See fig. -- tartan figure from intro -- }
+The perception layer of agent $A$ interprets the perceptible aspects of other agents, i.e. $\funcOut_{A'}(\stPt)$ for $A'\neq A$.
+Depending on the abstraction level at which they are considered, these inputs may be discrete (e.g., a boolean to indicate the presence of a car in the current lane) or continuous (e.g., the estimated position of a pedestrian).
+Second, other inputs will model control commands to the vehicle issued by its own autonomous controllers. 
+E.g. a controller may cause the vehicle to switch modes: such inputs are discrete. 
+Another controller (at a different level of abstraction) produces a piecewise continuous throttle angle command. Such an input is continuous. 
+
+To model how agents perceive each other at a high level, we consider that certain aspects of an agent can occasionally be perceived by other agents.
+The simplest such aspect is the agent's visual appearance.
+Formally, associated to an agent is a function $\funcOut:\reals^n \rightarrow \reals^p$.
+At each time instant $(t,j)$, the agent broadcasts $\funcOut(\stPt(t,j))$.
+Not every other agent can perceive this broadcast.
+Given two agents $A_1$ and $A_2$ in the same scenario, with agent $A_1$ broadcasting $y = f(x)$, agent $A_2$ must meet certain conditions on its state to be able to receive (and act upon) the information broadcast by $A_1$.
+Specifically, if $y(t,j) = (y_1,\ldots,y_p)$, then to listen to $y_k$, $k=1,\ldots,p$, the state $x_2(t,j)$ of $A_2$ must satisfy some boolean `listening' condition $c(x_2,k)$.
+For example, every agent $A_1$ must transmit its visual appearance - it can't become invisible.
+For another agent $A_2$ to perceive it, $A_2$ must be close enough and with a line of sight to $A_1$. 
+Then 
+\[c(x_2) \equiv ||x_1 - x_2 || \leq d \land \forall i\neq 1,2, A_1,A_2,A_i \text{ not aligned}\]
+
+This model of communication subsumes traditional models of processes that communicate via shared variables, like that in \todo[inline]{insert charon citation}, and generalizes it by imposing conditions under which communication is possible, rather than allow communication at all times.
