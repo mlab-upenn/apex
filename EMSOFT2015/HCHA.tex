@@ -28,13 +28,13 @@ where
 	Namely, the system switches between $\mode _i$ and $\mode _j$ when the state $\stPt$ is in $\guard((\mode_i,\mode _j))$.
 	%
 	\item $\reset : E \times \stSet \rightarrow \modeSet \times \stSet $ is a reset map that, given a transition $e = (\mode _i,\mode _j) \in E$ and a point $x$ on the guard $\guard(e)$, maps $x$ to a point $x^+$ in the invariant set of the next location $\mode_j$:
-	\[\reset: (x,(\mode _i,\mode _j)) \rightarrow (\mode_j,x^+)\;, x^+ \in Inv(\mode_j)\] 
+	\[\reset: ((\mode _i,\mode _j),x) \rightarrow (\mode_j,x^+)\;, x^+ \in Inv(\mode_j)\] 
 	%
 	\item $\funcOut: \reals^n \rightarrow \reals^p$ is an output function,
 	\item $C = \{c_1,\ldots,c_p\}$ is a set of $p \in \Ne$ perception conditions (defined below).	
 \end{itemize}
 \end{defn}
-\todo[inline]{uniformize guards' dependence on state and input}
+
 The differential inclusion $F_\mode$ in each location of the CHA models the continuous-time closed-loop behavior of the low-level controlled systems, i.e., the electromechanical systems of the car such as the powertrain.
 As stated earlier, the state $\stPt$ captures all the relevant information about the agent's dynamics. 
 It is widely recognized now that different navigation situations call for different control laws.

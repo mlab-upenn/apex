@@ -37,7 +37,6 @@ We will refer to these as \emph{agents}:an agent is an entity that functions con
 %As the traffic in major cities becomes more connected and more adaptive, we can expect such cases to increase in number. 
 Formally, we recognize the following set of four agent \emph{types}
 \[\agentTypeSet = \{\texttt{vehicle, pedestrian, road, trafficSignage}\}\]
-\todo[inline]{road is no longer an agent}
 
 Each agent type can have many (parametrized) instances, e.g. $\texttt{trafficSignage}$ can have instances speedLimit(70mph), speedLimit(25mph), HOVLane(3pm-6pm).
 Note that the $\texttt{vehicle}$ agent type can have instances that are autonomous vehicles, and other instances that are human-driven (and therefore that have different behaviors from the ego vehicle, which is by definition autonomous). 
@@ -61,11 +60,9 @@ Describing the behavior $\behavior_a$ of an agent instance requires us to formal
 We do so in Section \ref{HCHA}.
 %
 \item $\Lc = \{l_0,\ldots,l_p\}$ is a finite set of $p \in \Ne$ traffic laws. 
-A law $l_i$ is itself a tuple $l_i = (\alpha_i,\formula_i)$, 
-where $\alpha_i$ is an element from $\{0,1\}^T$ indicating at every time instant whether the law is active or not, 
-and $\formula_i$ is a temporal logic formula indicating how the law (when it is active) constrains the behavior of the vehicle. 
+A law $l_i$ is a temporal logic formula indicating how the law (when it is active) constrains the behavior of the vehicle. 
 I.e. it is a specification on the ego vehicle that must be satisfied. 
-The logic in which $\formula_i$ is expressed will depend on the formalism used to model the vehicle. 
+The logic in which $l_i$ is expressed will depend on the formalism used to model the scenario. 
 We will have more to say about this in the following sections.
 \end{itemize}
 
@@ -73,8 +70,12 @@ Each law represents a time-varying constraint on the allowed ego vehicle's behav
 That is, our verification algorithms do not necessarily assume that other vehicles will obey traffic laws. 
 What assumptions we make on the behavior of other vehicles is captured in $\behavior$.
 
-\begin{exmp}[Lane change continued]
-	Describe lane change scenario in above language, including some parametrized agent
+\begin{exmp}[Passing continued]
+	This scenario contains two instances $v_{ego}$ and $v_2$ of the \texttt{vehicle} agent type, one \texttt{road} agent, no \texttt{pedestrians} and one \texttt{trafficSignage} agent.
+	The behavior $\behavior_{v_2}$ is given by a sequence of reach sets as detailed in Section \ref{otherAgents}.
+	An example applicable law, expressed in discrete time LTL, is $l \defeq \always(position_{ego} = a \implies X position_{ego} \geq a)$, to indicate that backing up is not allowed.
+	Note that LTL is not ideally suited for this requirement since we need one formula per speed threshold $a$. A more concise logic would allow us to directly say $l \defeq \always(position_{ego}(t+1) \geq position_{ego}(t))$ (e.g., TPTL), while still being reasonably computationally tractable.
+	\todo[inline]{cite Alur and Henzinger TPTL JACM94}
 \end{exmp}
 	
 %	E.g an instance of scenario $s_0$ (Roundabout) might have the agents 

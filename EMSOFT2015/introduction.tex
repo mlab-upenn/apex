@@ -2,63 +2,62 @@
 \label{introduction}
 
 {\it Autonomy from human intervention in the machines that surround us promises many benefits.}
-
 {\it Because of these benefits, autonomous and semi-autonomous systems are now an accepted part of the economy and the household.}
-
+Examples include robots in shipping warehouses, vacuum robots and the emerging class of personal robots.
 {\it Autonomous vehicles are a particularly challenging class of autonomous systems.}
-
 {\it On a typical trip, the autonomous vehicle must recognize, enter, complete and exit many scenarios in a safe and timely manner. Example scenarios include traffic lights, roundabouts, pedestrians, weather conditions, etc. 
 It is not known, ahead of time, what the specific sequence of encountered scenarios will be.}
 
 {\it The corresponding technical challenges can be broadly divided into three categories: first, operation in a highly unpredictable environment. }
-
 {\it Second, a task (navigation) that must be executed at many levels of abstraction.}
-
-{\it Third, the task execution must satisfy three different types of constraints: safety, comfort and performance. Alternatively, these can be viewed as three objectives to be maximized.}
+{\it Third, the task execution must satisfy three different types of constraints: safety, comfort to the passengers and performance. Alternatively, these can be viewed as three objectives to be maximized.}
 
 {\it The environment of the autonomous vehicle is unpredictable: will others obey the laws, what will traffic conditions be, etc? What is the vehicle's objective in the short run?}
-
 {\it There is also a wide separation between the highest levels of plan execution ("go from A to B") and the lowest levels of plan execution ("accelerate steadily for the next 5 seconds"). How do we guarantee consistency between the commands at the different levels?}
-
-{\it The constraints of safety, comfort and performance belong to different domains of analysis and are likely most naturally expressed and verified with different formalisms.
+{\it Finally, the constraints of safety, comfort and performance belong to different domains of analysis and are most naturally expressed and verified with different formalisms.
 	How can verification results from one domain be ported over to another domain, so a coherent view of the system's operation arises?}
 
-{\it The safety of the car's passengers and of the people in its immediate environment is imperative at all times. 
-	What does safety mean in a given scenario?
-	In an emergency, how do we recognize what laws can be broken to preserve safety?}
+{\it The safety of the car's passengers and of the people in its immediate environment, in particular, is imperative at all times.}
+{\it Because of its importance, guaranteeing safety to a socially acceptable degree requires formal guarantees.}
+Potential legal repercussions of autonomous car accidents make such guarantees even more pressing.
+Thus it is essential to understand: what does safety mean in a given driving situation?
+{\it In an emergency, how do we recognize what laws can be broken to preserve safety?}
 
-%\footnote{Other notions of safety, such as passive safety where the autonomous system must not endanger others via \emph{inaction}, or extensions of the safety imperative to not damaging property (and not just people) are not covered here. We note nonetheless that guaranteeing that the active safety imperative is obeyed contributes to guaranteeing these other notions are also obeyed.}
-%For people to feel comfortable interacting with potentially dangerous autonomous agents, like autonomous cars, it is imperative that they be confident that these systems are at least as safe as the human-operated systems they are replacing.
-%In fact, for there to be an economic value behind the introduction of autonomous systems, they must, among other things, guarantee an increased level of safety relative to the current system. 
-%Increased and more consistent efficiency and effectiveness at completing their tasks are other desiderata, which are outside the scope of this paper.
-%We call this the `dorasical' environment, from the Greek $\delta \rho \acute{\alpha} \sigma \eta$ for action.
+{\it Today we have theories that deal with high-level planning in a discrete grid world: where the car should go given where everyone else is. E.g., \todo[inline]{cite controller synthesis ufuk,belta,vasu,nezmiye}}
+{\it We also have discrete theories for verification of temporal logic properties of the (infinite state space) closed-loop system modeled as a Kripke structure, possibly obtained by an abstraction process, e.g. using approximate bisimulations \todo[inline]{girard,h. tanner, julius,IMEAD pabithra}. 
+	These abstractions are then amenable to model checking \todo[inline]{cite Principles of Model checking }.
+	Typically, a CEGAR loop \todo[inline]{Clarke JACM}is required to guarantee completeness of the verification algorithm. Completeness might only be asymptotic.}
+{\it At the other end of the abstraction spectrum, control theory provides analysis and design tools of low level controllers. Automatic analysis tools exist but are limited in scope.}
+See, e.g., \todo[inline]{Sriram's Lyap from simulations, Geir Dellerud's STORMED hybrid systems}, or provide probabilistic guarantees of completeness \todo[inline]{GF's staliro}.
+{\it Because of the large degree of unpredictability, compute- and memory-intensive low level methods can't be used alone (let alone manual methods). 
+	Yet because of the safety imperative, we can't rely on non-guaranteed abstractions.  
+	In this paper, we demonstrate the need for using multiple formalisms in the verification of autonomous plans. 
+	We illustrate this with a case study of a typical lane change maneuver.}
 
-
-{\it Guaranteeing safety to a socially acceptable degree requires formal guarantees.}
-
-{\it Today we have theories that deal with high-level planning in a discrete grid world: where the car should go given where everyone else is.}
-
-{\it We also have discrete theories for verification of temporal logic properties of the closed-loop system modeled as a Kripke structure. Some of these theories are amenable to model checking.}
-
-{\it Control theory provides analysis and design tools of low level controllers. Automatic analysis tools exist but are limited in scope.}
-
-{\it Because of the large degree of unpredictability, compute- and memory-intensive low level methods can't be used alone (let alone manual methods). Yet because of the safety imperative, we can't rely on non-guaranteed abstractions.  In this paper, we demonstrate the need for using multiple formalisms in the verification of autonomous plans. We illustrate this with a case study of a typical lane change maneuver.}
-
-\begin{exmp}[Lane change maneuver]
-	
-	Throughout this work we will take as a case study the following example. At various instances we will zoom in on on specific scenarios within the sequence of events. The case study shows a target vehicle driving on a two lane road network that includes a merge which introduces another vehicle into the path of the target vehicle. The target vehicle's planning system may autonomously decide to initiate a lane change manuever to get around the other vehicle. The scenario terminates with an intersection governed by a traffic light. This scenario contains two vehicle agents (with different plans, 1 traffic control (infrastructure agent), and 1 road network. 
-	
-	\todo[inline]{who's involved in this scenario; what is the goal of ego vehicle; what is the sfaety constraint; why model checking alone won't suffice.}
+\begin{exmp}[Passing]
+	We use a passing scenario as a running example.
+	The scenario shows the ego vehicle driving in the right lane of a uni-directional two lane road network. 
+	Another car is driving in front of the ego vehicle at a lower speed.
+	The ego vehicle's planner decides to initiate a passing maneuver, which involves moving to the left lane, accelerating to pass the other vehicle, then moving back into the right lane ahead of the other vehicle.
+	The scenario terminates with an intersection governed by a traffic light. 
+	The safety requirement is that the ego vehicle must remain at least a certain distance away from the other vehicle.
+	The mission goal is to arrive at and cross the intersection.
+	The verification engineer is given a vehicle controller and must check formally that the closed-loop system (ego vehicle + controller), in the representation used by the controller, performs correctly and safely.
+	E.g., that representation can be a finite automaton, and the road is represented by a finite grid.
+	Thus model checking will happen on this finite representation.
+	Yet the safety requirement requires us to work with the more accurate continuous dynamics to determine the cars' movements during a lane change, especially during lateral changes of position. 
+	Thus we need both model checking techniques, and reachability computations, to verify the safe and correct completion of this scenario.
+	From a planning perspective we define the safety of the discrete controller of the target vehicle to be the satisfaction of the following safety and liveness properties:
+	\begin{enumerate}
+		\item The target vehicle may not exceed the speed limit (safety).
+		\item The target vehicle may not collide with any other vehicles (if they exist) on the road (safety).
+		\item The target vehicle must stop at a red light (safety).
+		\item The target vehicle must eventually complete the scenario (liveness).
+		It is possible to specify these properties using LTL operators (always and eventually).
+	\end{enumerate}
 \end{exmp}
 
-From a planning perspective we define the safety of the discrete controller of the target vehicle to be the satisfaction of the following safety and liveness properties:
-\begin{enumerate}
-	\item The target vehicle may not exceed the speed limit (safety).
-	\item The target vehicle may not collide with any other vehicles (if they exist) on the road (safety).
-	\item The target vehicle must stop at a red light (safety).
-	\item The target vehicle must eventually complete the scenario (liveness).
-It is clearly possible to specify these properties using LTL operators (always and eventually).
-\end{enumerate}
+
 
 %Work on autonomous navigation: DARPA urban challenge papers, controller synthesis papers.
 %

@@ -1,3 +1,5 @@
+\subsubsection{Properties of the abstraction chain}
+\label{thmAbstractionLevels}
 \begin{thm}
 	Let $(\Sys,\Vc,\Pc,\{\Sys_i\})$ be a HCHA.
 	Let $\hstraj =(\mode,\sttraj) \in \Sc_{\Sys}$ be a solution of CHA $\Sys$ with continuous part $\sttraj$.
@@ -46,16 +48,48 @@
 \begin{thm}
 	Let $(\Sys,\Vc,\Pc,\{\Sys_i\})$ be a HCHA.
 	Let $y \in \Sc_{\Sys_i}$ be a solution of CHA $\Sys_i$ for some $i$.
-	Then either there exists $\sttraj \in \Sc_\Sys$ s.t. $y} = \proj{\sttraj}{V_i}$,
+	Then either there exists $\sttraj \in \Sc_\Sys$ s.t. $y = \proj{\sttraj}{V_i}$,
 	or $y$ can be refined to such a trajectory in at most $|\modeSet|\cdot n$ steps,
 	where $\modeSet$ is the location set of $\Sys$ and $n$ is its dimension.
 \end{thm}
 
-\begin{proof}
-	Write $y$ for Assume that a solution $\sttraj$ as stated does not exist.
-	There are two reasons why this might happen:
-	\begin{itemize}
-		\item Either, iwithin the same $I_j$ in the domain of $y$, $\dot{y}$ obeys two different dynamics $F_\mode$ and $F_{\mode'}$ for $\mode,\mode' \in q \in \modeSet_i$.
-		In general, this can not be produced by a $\Sys$ trajectory.\footnote{}
-	\end{itemize}
+\begin{proof} (Sketch)
+	Assume that a solution $\sttraj \in \Sc_\Sys$ as stated does not exist.
+	Broadly speaking, this can happen because $\Sys_i$ can choose a sequence of continuous dynamics that can not be selected by $\Sys$, since the dynamics of $\Sys_i$ are larger (in the sense of Def.~\ref{def:HCHA}) than those of $\Sys$.
+	More specifically, there are two ways this can happen:
+	\begin{enumerate}
+		\item Either, within the same $I_j$ in the domain of $y$, $\dot{y}$ obeys two different dynamics $F_\mode$ and $F_{\mode'}$ for $\mode,\mode' \in q \in \modeSet_i$.
+		In general, this can not be produced by a $\Sys$ trajectory.\footnote{Unless it so happens that some element of $y(t_j,j)^{\uparrow}$ is in $\guard(\mode,\mode')$ (where $t_j$ is the transition time). }
+		\label{item:modechange}
+		%
+		\item Or, within the same $I_j$ in the domain of $y$, $\dot{y}$ obeys two different dynamics: 
+		over $[t,t') \subset I_j$ it obeys $F_\mode(\sttraj(t))$ where $\sttraj$ is a $\Sys$ solution that extends $y$, i.e. $\sttraj = [z,y] \in \reals^n$.
+		And at $t'$ it obeys $F_\mode(x')$ where $x' \in y^\uparrow(t') \setminus \{\sttraj(t')\}$. 
+		\label{item:xchange}		
+	\end{enumerate}
+	
+	Note that if we exclude the above two cases, then the discrete dynamics (i.e. the transitions) of $\Sys_i$ can always be reproduced by $\Sys$.
+	
+	Now suppose Case \ref{item:modechange} happens: then we refine the partition $\Pc$ by creating a separate part for $\mode'$. I.e. if $\mode' \in P_1$, then we refine $\Pc$ to 
+	$\Pc' = \Pc \setminus \{P_1\} \cup (P_1 \setminus \mode') \cup \{\mode'\}$.
+	This guarantees that there won't be invisible dynamics changes caused by the (previously internal) transition $(\mode,\mode')$.
+	Since there are $|\modeSet|$ locations, this refinement is applied at the most $|\modeSet|$ times.
+	Doing the refinement $|\modeSet|$ times corresponds to preserving the discrete dynamics perfectly.
+	
+	Now suppose Case \ref{item:xchange} happens: then we must eliminate the invisible dynamics changes that occur because of the projection of the state vector onto $V_i$.
+	Let $W$ be the set of indices where $\sttraj(t')$ and $x'$ differ. 
+	First, because $\sttraj$ extends $y$, and therefore agrees with it over $V_i$, $W$ and $V_i$ don't intersect. 
+	Thus $W = \{i_1,i_2,\ldots,i_m\}$ consists entirely of `dead' variables (i.e. non-surviving).
+	We refine $\Sys_i$ as follows: promote the smallest index in $W$ to surviving at level $i$: i.e. define $V_i' = V_i \cup \{i_1\}$.
+	Then the dynamics of $\Sys_i$ must be refined accordingly, namely 
+	$F'_q(y) \defeq \proj{\cup_{\mode \in q,x \in y^\uparrow}F_\mode(x) }{V_i'}$.
+	Thus the solutions of $\Sys_i$ can no longer choose the dynamics $F_\mode (x')$ which led to Case \ref{item:xchange} above.
+	Of course, the rest of the variables in $W$ could still cause this problem.
+	But we refine one index at a time, since every refinement produces a new set of dynamics, which might lead to a different violation, and make others impossible. 
+	I.e., the set $W$ depends on the current $V_i$ and is not static. 
+	Since there are $n$ indices, and a new index is added to $V_i$ with each refinement, this can happen a maximum of $n$ times. Surviving all indices (i.e., $V_i' = \{1,\ldots,n\}$) corresponds to preserving the continuous dynamics perfectly.
+	
+	Thus there is a total of $|L|n$ refinements possible before every $\Sys_i$ trajectory is the projection of a $\Sys$ trajectory.	
 \end{proof}
+
+	Note that this maximum number of refinements is \emph{independent of the level of abstraction $i$}.

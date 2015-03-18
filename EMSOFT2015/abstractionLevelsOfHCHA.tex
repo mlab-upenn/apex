@@ -1,7 +1,10 @@
+\subsubsection{Abstraction levels}
+\label{abstractionLevelsOfHCHA}
 
 We formally define the abstraction levels at which it is controlled, and consequently at which it is verified.
 A \emph{hierarchical} CHA is a CHA with a chain of partitions defined on its location set $\modeSet$, and a corresponding chain of simplified continuous dynamics.
 \begin{defn}[Hierarchical CHA]
+	\label{def:HCHA}
 	A \textbf{hierarchical CHA} (HCHA) is a tuple 
 	$(\Sys, \{V_i\}_{i=0}^{a}, \{P_i\}_{i=0}^{a}, \{\Sys_i\}_{i=0}^{a})$ where 
 	$\Sys$ is an $n$-dimensional CHA, 
@@ -38,10 +41,10 @@ A \emph{hierarchical} CHA is a CHA with a chain of partitions defined on its loc
 		\forall x \in \stSet_{i-1},\; \proj{x}{V_i} &=& \proj{\reset_{i-1}(e,x)}{V_i}
 		\\
 		C_i &=& C
-		\\
-		\proj{x}{V_i} &=& \proj{\reset_{i-1}(e,x)}{V_i} \forall e \in E_{i-1},x \in \guard_{i-1}(e)
-	\end{eqnarray*}
-	
+		\end{eqnarray*}
+Finally, for all $ e \in E_{i-1},x \in \guard_{i-1}(e)$,
+\[\proj{x}{V_i} = \proj{\reset_{i-1}(e,x)}{V_i}\]
+		
 \end{defn}
 \todo[inline]{should $F$ be the convex hull of the union?}
 Every element $P_i$ of the partition chain represents an abstraction level. 

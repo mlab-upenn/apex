@@ -31,12 +31,13 @@ For the other vehicles and pedestrians, the basic perceptible external behavior 
 	where $c(x) = \|x-x_A\| \leq d$ for some $d > 0$.
 	\end{defn}
 
-The basic HCHA for pedestrians and other vehicles simply models how their position evolves. 
+The basic HCHA for pedestrians and other vehicles simply models how their 2D position evolves. 
 Notice that because the dynamics are given by an inclusion rather than an equation, other agents' behavior is nondeterministic and their position at each moment in time is a non-singleton.
 We denote that set by $X(t,0)$
 \[X(t,0) \defeq \{x(t) \sut x \text{ is a solution of the inclusion}.\}\]
 (The $j$ parameter always equals 0 since the basic HCHA only has one mode.)
 This models the uncertainty about their behavior.
+Deterministic behavior is naturally captured by making $F(x)$ a singleton for every $x$, i.e. a differential equation.
 
 This model is sufficient for basic safety and correctness verification, and for imposing minimally reasonable restrictions on their behavior. 
 For example, we can impose that a vehicle never leaves the road by making the velocity vectors $F(x)$ turn inward at road edges.
