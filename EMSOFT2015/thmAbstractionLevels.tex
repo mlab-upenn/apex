@@ -47,9 +47,13 @@
 
 \begin{thm}
 	Let $(\Sys,\Vc,\Pc,\{\Sys_i\})$ be a HCHA.
-	Let $y \in \Sc_{\Sys_i}$ be a solution of CHA $\Sys_i$ for some $i$.
-	Then either there exists $\sttraj \in \Sc_\Sys$ s.t. $y = \proj{\sttraj}{V_i}$,
-	or $y$ can be refined to such a trajectory in at most $|\modeSet|\cdot n$ steps,
+	Either $\Sys_i$ be a CHA in the abstraction chain.
+	Then either $\Sys_i$ has the following property:
+	\begin{itemize}
+		\item For every solution $y \in \Sc_{\Sys_i}$,
+		there exists $\sttraj \in \Sc_\Sys$ s.t. $y = \proj{\sttraj}{V_i}$
+	\end{itemize}
+	or $\Sys_i$ can be refined in at most $|\modeSet|\cdot n$ steps so that it has the property, 
 	where $\modeSet$ is the location set of $\Sys$ and $n$ is its dimension.
 \end{thm}
 
