@@ -21,7 +21,7 @@ where
 	\item $\modeSet \subset \Ne$ is a finite set of control locations that the system switches through. 
 	\item $\hsSet \triangleq \modeSet \times \stSet$ is then the hybrid state space.
 	\item $F_\mode : \stSet \times \inpSet \rightarrow \Re^n$ defines a differential inclusion governing the evolution of the state in location $\mode$: $\dot{\stPt} \in F_\mode(\stPt,u)$. 
-	\item $Inv : \modeSet \rightarrow 2^\stSet$ defines an invariant condition on the state while in location $\mode$.
+	\item $Inv : \modeSet \rightarrow 2^\stSet$ defines an invariant condition on the state while in location $\mode$: $\stPt \in Inv(\mode)$.
 	\item $E \subseteq \modeSet \times \modeSet$ is the set of location transitions (a.k.a. switches, or jumps).
 	%
 	\item $\guard : E \rightarrow 2^\stSet$ is the guard condition that enables a location transition. 

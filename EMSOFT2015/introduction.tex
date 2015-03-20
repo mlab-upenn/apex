@@ -5,36 +5,72 @@
 {\it Because of these benefits, autonomous and semi-autonomous systems are now an accepted part of the economy and the household.}
 Examples include robots in shipping warehouses, vacuum robots and the emerging class of personal robots.
 {\it Autonomous vehicles are a particularly challenging class of autonomous systems.}
-{\it On a typical trip, the autonomous vehicle must recognize, enter, complete and exit many scenarios in a safe and timely manner. Example scenarios include traffic lights, roundabouts, pedestrians, weather conditions, etc. 
-It is not known, ahead of time, what the specific sequence of encountered scenarios will be.}
+{\it On a typical trip, the autonomous vehicle must recognize, enter, complete and exit many scenarios in a safe and timely manner.} 
+	Example scenarios include traffic lights, roundabouts, pedestrians, weather conditions, etc. 
+It is not known, ahead of time, what the specific sequence of encountered scenarios will be.
 
-{\it The corresponding technical challenges can be broadly divided into three categories: first, operation in a highly unpredictable environment. }
-{\it Second, a task (navigation) that must be executed at many levels of abstraction.}
-{\it Third, the task execution must satisfy three different types of constraints: safety, comfort to the passengers and performance. Alternatively, these can be viewed as three objectives to be maximized.}
+{\it The corresponding technical challenges can be broadly divided into three categories: the first is operation in a highly unpredictable environment.}
+For example, what will traffic conditions be, how will other drivers behave and will they obey the laws, will certain parts of the road be inaccessible, and will there be emergency responders on the road needing right of way? 
+Note that these uncertainties occur at several time scales, from the long-term (traffic conditions) to the very short-term (emergency responders driving by).
+Therefore the on-board controller(s) must always decide: what is the vehicle's objective in the short run?
 
-{\it The environment of the autonomous vehicle is unpredictable: will others obey the laws, what will traffic conditions be, etc? What is the vehicle's objective in the short run?}
-{\it There is also a wide separation between the highest levels of plan execution ("go from A to B") and the lowest levels of plan execution ("accelerate steadily for the next 5 seconds"). How do we guarantee consistency between the commands at the different levels?}
-{\it Finally, the constraints of safety, comfort and performance belong to different domains of analysis and are most naturally expressed and verified with different formalisms.
-	How can verification results from one domain be ported over to another domain, so a coherent view of the system's operation arises?}
-
-{\it The safety of the car's passengers and of the people in its immediate environment, in particular, is imperative at all times.}
+{\it The second challenge is that task execution must satisfy three different types of constraints: safety, comfort to the passengers and performance.}
+Alternatively, these can be viewed as three objectives to be maximized.
+See Fig.\ref{fig:aspects}.
+\begin{figure}[tb]
+	\centering
+	\includegraphics{figures/placeHolder}
+	\caption{Aspects of an autonomous car.}
+	\label{fig:aspects}
+\end{figure}
+\emph{These constraints belong to different domains of analysis and are most naturally expressed and verified with different formalisms.}
+How can verification results from one domain be ported over to another domain, so a coherent view of the system's operation arises?
+{\it In particular, the safety of the car's passengers and of the people in its immediate environment, is imperative at all times.}
 {\it Because of its importance, guaranteeing safety to a socially acceptable degree requires formal guarantees.}
 Potential legal repercussions of autonomous car accidents make such guarantees even more pressing.
 Thus it is essential to understand: what does safety mean in a given driving situation?
-{\it In an emergency, how do we recognize what laws can be broken to preserve safety?}
 
-{\it Today we have theories that deal with high-level planning in a discrete grid world: where the car should go given where everyone else is. E.g., \cite{WongpiromsarnTM10hscc} \todo[inline]{cite controller synthesis ufuk,belta,vasu,nezmiye}}
-{\it We also have discrete theories for verification of temporal logic properties of the (infinite state space) closed-loop system modeled as a Kripke structure, possibly obtained by an abstraction process, e.g. using approximate bisimulations \todo[inline]{girard,h. tanner, julius,IMEAD pabithra}. 
-	These abstractions are then amenable to model checking \todo[inline]{cite Principles of Model checking }.
-	Typically, a CEGAR loop \todo[inline]{Clarke JACM}is required to guarantee completeness of the verification algorithm. Completeness might only be asymptotic.}
-{\it At the other end of the abstraction spectrum, control theory provides analysis and design tools of low level controllers. Automatic analysis tools exist but are limited in scope.}
-See, e.g., \todo[inline]{Sriram's Lyap from simulations, Geir Dellerud's STORMED hybrid systems}, or provide probabilistic guarantees of completeness \todo[inline]{GF's staliro}.
-{\it Because of the large degree of unpredictability, compute- and memory-intensive low level methods can't be used alone (let alone manual methods). 
-	Yet because of the safety imperative, we can't rely on non-guaranteed abstractions.  
+{\it The third challenge is that there is a wide separation between the highest levels of plan execution ("go from A to B") and the lowest levels of plan execution ("accelerate steadily for the next 5 seconds"). How do we guarantee consistency between the commands issued at the different levels?
+The most common approach to dealing with this \emph{execution abstraction stack} is to perform a corresponding separation of the control objectives and design separate controllers for each layer \cite{UrmsonX07_Tartan}. See Fig.\ref{fig:tartanHierarchy}.
+\begin{figure}[tb]
+	\label{fig:tartanHierarchy}
+	\includegraphics[scale=1]{placeHolder.pdf}
+	\caption{The execution abstraction stack and corresponding typical control hierarchy for autonomous navigation.}
+\end{figure}
+
+{\it Today we have theories that deal with \emph{high-level planning in a discrete grid world} (see Fig.\ref{fig:discreteview}), determining which `box' the car should go to given what boxes are occupied by the other vehicles, and given non-deterministic descriptions of their behaviors in Linear Temporal Logic(LTL).
+}
+E.g., \cite{WongpiromsarnTM10hscc,RamanK13_ImpossibleBehaviors}.
+We note that these controller synthesis algorithms suffer from a doubly-exponential computational complexity \cite{PnueliR89}, though polynomial complexity algorithms exist for a fragment of LTL \cite{KleinP10_RevisitingGR1}.
+{\it We also have methods for verification of temporal logic properties of the closed-loop system} modeled as some kind of finite automaton, e.g., \cite{Bouyer06latin}.
+\begin{figure}[tb]
+	\label{fig:discreteview}
+	\includegraphics[scale=1]{placeHolder.pdf}
+	\caption{Discrete view of the world for the planning controller. The road is a grid with binary occupancy in each box, and the closed-loop system (car + controller) is given by a finite automaton.}
+\end{figure}
+{\it At the other end of the abstraction spectrum, control theory provides analysis and design tools of low level controllers. Automatic analysis tools exist \cite{KloetzerB08tac} but are limited in scope.}
+See, e.g., \todo[inline]{Sriram's Lyap from simulations, Geir Dellerud's STORMED hybrid systems, decidable classes of HS}, or provide probabilistic guarantees of completeness \todo[inline]{GF's staliro}.
+{\it Because of the large degree of unpredictability, compute- and memory-intensive low level methods can't be used alone (let alone manual methods). }
+
+The gap between high-level grid world as we will call it, and the low-level physical world is two-fold:
+first, high-level synthesis and verification algorithms apply to the grid world  and to model representations that bear no a priori connection to the most accurate models of the system that we have, namely, the models of the continuous dynamics and of the code controlling them.
+Secondly, the verification effort at the low-level is unaware of the commands that will be issued at the high level. 
+{\it To bridge the gap between the high-level planning and verification methods, and the lower-level control-theoretic analysis tools, guaranteed abstractions have been proposed.}
+Given a representation of a system, e.g. as a system of differential equations, a guaranteed abstraction of that system produces a second representation which is simpler, and yet whose external behavior is similar, in a certain precise sense, to that of the original system.
+Some of these abstractions produce finite-state systems ???h. tanner, tabuada, which are amenable to model checking [???Principles of MC]. 
+Others result in lower-dimensional (but still infinite-state) systems [???girard, julius, Mahesh Vishwanathan and IMEAD pabithra], for which some verification techniques are better suited.
+Yet, the conditions under which these abstractions can be obtained restrict their application when it comes to industrially developed systems, where the system is conceptually decomposed into different \emph{aspects}, each of which is developed and tested by a different team.
+
+
+%Typically, a CEGAR loop \todo[inline]{Clarke JACM} is required to guarantee completeness of the verification algorithm. 
+	
+Because of the safety imperative, we can't rely on non-guaranteed abstractions.  
 	In this paper, we demonstrate the need for using multiple formalisms in the verification of autonomous plans. 
-	We illustrate this with a case study of a typical lane change maneuver.}
+	We illustrate this with a case study of a typical lane change maneuver.
 
-\begin{exmp}[Passing]
+
+\begin{exmp}[Lane Change 1]
+	\todo[inline]{change to Lane change 1,2,...}
 	We use a passing scenario as a running example.
 	The scenario shows the ego vehicle driving in the right lane of a uni-directional two lane road network. 
 	Another car is driving in front of the ego vehicle at a lower speed.
