@@ -11,8 +11,22 @@ Passing manuever is scenario on 2 lane road, target vehicle, 1 environmental veh
 		\item Lane change is hierarchical and has sub-modes, right to left, straight, and left to right.
 		\item Each submode has same dynamics but implements a different motion primitive.
 	\end{enumerate}
+	\item Target vehicle has non linear dynamics described by bicycle model.
+	\item Trajectories are defined for right to left lane switch and left to right lane switch.
+	\item Hybrid system modes are described by drive forward and lane change.
+	\begin{enumerate}
+		\item Lane change is hierarchical and has sub-modes, right to left, straight, and left to right.
+		\item Each submode has same dynamics but implements a different motion primitive.
+	\end{enumerate}
 \end{enumerate}
 \subsection{Environmental Vehicle Model}
+Environmental vehicle has simple 2D dynamics, no specific controller, non-determinism describes state evolution.
+\begin{enumerate}
+	\item Environmental vehicle must drive forwards.
+	\item Environmental vehicle must not change lanes if other lane is occupied.
+	\item At every step the environmental vehicle can apply +/- some specified level of acceleration.
+	\item At every step environmental vehicle can switch lanes if condition 2 is not violated.
+\end{enumerate}
 Environmental vehicle has simple 2D dynamics, no specific controller, non-determinism describes state evolution.
 \begin{enumerate}
 	\item Environmental vehicle must drive forwards.
@@ -23,7 +37,7 @@ Environmental vehicle has simple 2D dynamics, no specific controller, non-determ
 \subsection{dReal Model}
 \begin{enumerate}
 	\item 1 or 2 modes depending on lane change or passing.
-	\item Dynamics are non linear bicycle model (insert figure)
+	@@ -28,5 +27,4 @@ Passing manuever is scenario on 2 lane road, target vehicle, 1 environmental veh
 	\item Plant controller is tracking controller which follows trajectory.
 \end{enumerate}
 \subsection{Controller with Partial Dynamics}
