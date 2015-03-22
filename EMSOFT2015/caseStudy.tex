@@ -1,7 +1,7 @@
 \section{Case study}
 \label{caseStudy}
 \subsection{Scenario Description}
-Passing manuever is scenario on 2 lane road, target vehicle, 1 environmental vehicle. The target vehicle must perform a lane change maneuver in order to get into the left turn lane before the end of the scenario.
+Lane change manuever scenario occurs on a 2 lane road with the target vehicle and 1 environmental vehicle. The target vehicle must change lanes in order to get into the left turn lane before the end of the scenario.
 \begin{figure}[tb]
 	\label{fig:discreteview}
 		\includegraphics[scale=.4]{scenario.png}
@@ -13,11 +13,9 @@ Passing manuever is scenario on 2 lane road, target vehicle, 1 environmental veh
 	\item Trajectories are defined for right to left lane switch and left to right lane switch.
 	\item Hybrid system modes are described by drive forward and lane change.
 	\begin{enumerate}
-		\item Lane change is hierarchical and has sub-modes, right to left, straight, and left to right.
-		\item Each submode has same dynamics but implements a different motion primitive.
+		\item Both lane change modes have the same dynamics and controller but implement a different motion primitive (trajectory).
 	\end{enumerate}
-	\item Target vehicle has non linear dynamics described by bicycle model.
-	Consider the target vehicle defined as a non-linear hybrid system using a  bicycle model:
+	\item Target vehicle has non linear dynamics described by bicycle model:
 	\begin{equation}
 	\begin{aligned}
 	\ddot{\beta}=\left(\frac{C_rl_r-C_fl_f}{mv^2} \right)\dot{\psi}+\\
@@ -51,9 +49,39 @@ Passing manuever is scenario on 2 lane road, target vehicle, 1 environmental veh
 		\item Lane change is hierarchical and has sub-modes, right to left, straight, and left to right.
 		\item Each submode has same dynamics but implements a different motion primitive.
 	\end{enumerate}
+	\item Final control equations:
+	\begin{equation}
+	\begin{aligned}
+	v_w=k_1(cos{(\Psi_d)}(s_{y,d}-s_y-w_y)\\
+	-sin{(\Psi_d)}(s_{x,d}-s_x-w_x))\\ 
+	+k_2(\Psi_d-\Psi-w_{\Psi}) \\
+	+k_3(\dot{\Psi_d} -\dot{\Psi}-w_{\psi})\\
+	-k_4(\delta-w_{\delta})
+	\end{aligned}
+	\end{equation}
+	\begin{equation}
+	\begin{aligned}
+	a_x=k_5(cos{(\Psi_d)}(s_{x,d}-s_x-w_x)\\
+	+sin{(\Psi_d)}(s_{y,d}-s_y-w_y))\\
+	+k_6(v_d-v-w_v)
+	\end{aligned}
+	\end{equation}
 \end{enumerate}
+\begin{figure}[tb]
+	\label{fig:discreteview}
+	\centering
+	\includegraphics[scale=.5]{hybrid.png}
+	\caption{Hybrid automata describing lane change}
+\end{figure}
 \subsection{Environmental Vehicle Model}
-Environmental vehicle has simple 2D dynamics, no specific controller, non-determinism describes state evolution.
+Environmental vehicle has simple 2D dynamics, no specific controller, non-determinism describes state evolution. When considering other agents (especially vehicles) in a scenario such non-linear dynamics are completely unnecessary. The primary reasoning is that the uncertainty about the state of other vehicles is not do to poor model parameter identification, but rather unknown inputs [2]. The dynamics of the other agents are described by equations (7) and (8) as in [3]:
+\begin{equation}
+\dot{s_x}=v\cos{\beta}
+\end{equation}
+\begin{equation}
+\dot{s_y}=v\sin{\beta}
+\end{equation}
+
 \begin{enumerate}
 	\item Environmental vehicle must drive forwards.
 	\item Environmental vehicle must not change lanes if other lane is occupied.
