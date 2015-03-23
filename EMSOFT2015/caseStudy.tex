@@ -1,21 +1,15 @@
 \section{Case study}
 \label{caseStudy}
 \subsection{Scenario Description}
-Lane change manuever scenario occurs on a 2 lane road with the target vehicle and 1 environmental vehicle. The target vehicle must change lanes in order to get into the left turn lane before the end of the scenario.
+Lane change manuever scenario occurs on a 2 lane road with the target vehicle and 1 environmental vehicle. The target vehicle must change lanes in order to get into the left turn lane before the end of the scenario.Fig.\ref{fig:scenario} contains a pictorial representation of the scenario.
 \begin{figure}[tb]
-	\label{fig:discreteview}
+	\label{fig:scenario}
 		\includegraphics[scale=.4]{scenario.png}
 	\caption{Pictorial description of target vehicle scenario}
 \end{figure}
 \subsection{Target Vehicle Model}
-\begin{enumerate}
-	\item Target vehicle has non linear dynamics described by bicycle model.
-	\item Trajectories are defined for right to left lane switch and left to right lane switch.
-	\item Hybrid system modes are described by drive forward and lane change.
-	\begin{enumerate}
-		\item Both lane change modes have the same dynamics and controller but implement a different motion primitive (trajectory).
-	\end{enumerate}
-	\item Target vehicle has non linear dynamics described by bicycle model:
+\subsubsection{Vehicle Dynamics}
+Target vehicle plant has nonlinear dynamics described by bicycle model.
 	\begin{equation}
 	\begin{aligned}
 	\ddot{\beta}=\left(\frac{C_rl_r-C_fl_f}{mv^2} \right)\dot{\psi}+\\
@@ -43,17 +37,32 @@ Lane change manuever scenario occurs on a 2 lane road with the target vehicle an
 	\end{equation}
 	
 	\(C_f,C_r\) and \(l_f, l_r\) describe respectively the cornering stiffness and distances from the center of gravity to the axles. \(I_z\) is the moment of inertia and \(m\) is the vehicle mass. \(\beta\) is the slip angle at the center of mass, \(\psi\) is the heading angle, \(\dot{\psi}\) is the yaw rate, \(v\) is the velocity, \(s_x\) and \(s_y\) are the x and y positions, and \(\delta\) is the angle of the front wheel. In the formulation of [6], the inputs to the system are \(a_x\), the logitudinal acceleration, and \(v_w\) the rotational speed of the steering angle. The \(y\) terms represent disturbances to the system. For example \(y_{\beta}\) and \(y_{\dot{\psi}}\) represent disturbances to the slip angle at the center of mass and the yaw rate. 
+\subsubsection{Hybrid Model}
+	\begin{enumerate}
 	\item Trajectories are defined for right to left lane switch and left to right lane switch.
 	\item Hybrid system modes are described by drive forward and lane change.
 	\begin{enumerate}
 		\item Lane change is hierarchical and has sub-modes, right to left, straight, and left to right.
 		\item Each submode has same dynamics but implements a different motion primitive.
 	\end{enumerate}
-	\item Final control equations:
+
+		\begin{figure}[tb]
+			\label{fig:hybrid}
+			\centering
+			\includegraphics[scale=.5]{hybrid.png}
+			\caption{Hybrid automata describing lane change}
+		\end{figure}
+	\item Fig.\ref{fig:hybrid} describes the system.
+	\item[] \(G_1\) and \(G_2\) If there is a vehicle detected in the current lane traveling at a velocity less than the target vehicle's velocity, and there exists another lane which has the same direction of travel as the current lane, and the reachable set of the target vehicle executing a motion primitive for a lane change does not intersect with any other vehicle in the scenario, transition to the lane change mode.
+	\item[] \(G_0\) If lane change motion primitive is complete, transition back to the follow lane mode.
+		\end{enumerate}
+
+\subsubsection{Plant Controller}
+Final control equations generate inputs for the plant which represent longitudinal acceleration and the rate of change of the steering angle:
 	\begin{equation}
 	\begin{aligned}
 	v_w=k_1(cos{(\Psi_d)}(s_{y,d}-s_y-w_y)\\
-	-sin{(\Psi_d)}(s_{x,d}-s_x-w_x))\\ 
+	-sin{(\Psi_d)}(s_{x,d}-s_x-w_x)\\ 
 	+k_2(\Psi_d-\Psi-w_{\Psi}) \\
 	+k_3(\dot{\Psi_d} -\dot{\Psi}-w_{\psi})\\
 	-k_4(\delta-w_{\delta})
@@ -62,17 +71,13 @@ Lane change manuever scenario occurs on a 2 lane road with the target vehicle an
 	\begin{equation}
 	\begin{aligned}
 	a_x=k_5(cos{(\Psi_d)}(s_{x,d}-s_x-w_x)\\
-	+sin{(\Psi_d)}(s_{y,d}-s_y-w_y))\\
+	+sin{(\Psi_d)}(s_{y,d}-s_y-w_y)\\
 	+k_6(v_d-v-w_v)
 	\end{aligned}
 	\end{equation}
-\end{enumerate}
-\begin{figure}[tb]
-	\label{fig:discreteview}
-	\centering
-	\includegraphics[scale=.5]{hybrid.png}
-	\caption{Hybrid automata describing lane change}
-\end{figure}
+ADD guard condition information
+
+
 \subsection{Environmental Vehicle Model}
 Environmental vehicle has simple 2D dynamics, no specific controller, non-determinism describes state evolution. When considering other agents (especially vehicles) in a scenario such non-linear dynamics are completely unnecessary. The primary reasoning is that the uncertainty about the state of other vehicles is not do to poor model parameter identification, but rather unknown inputs [2]. The dynamics of the other agents are described by equations (7) and (8) as in [3]:
 \begin{equation}
@@ -97,9 +102,7 @@ Environmental vehicle has simple 2D dynamics, no specific controller, non-determ
 \end{enumerate}
 \subsection{dReal Model}
 \begin{enumerate}
-	\item 1 or 2 modes depending on lane change or passing.
-	@@ -28,5 +27,4 @@ Passing manuever is scenario on 2 lane road, target vehicle, 1 environmental veh
-	\item Plant controller is tracking controller which follows trajectory.
+	\item Consider several other vehicles in the environment with simple 2-D kinematics and the target vehicle with the nonlinear bicycle model dynamics. While in general the reachability problem for non-linear hybrid systems is undecidable. Recent work [1] has shown that if a user is able to specify a bound on the ODE which is an arbitrary positive rational number \(\delta\), then propositions in first order logic over a region \textit{unsafe} can be evaluated. Specifically a system, \(H\), is \(safe\) if it cannot reach \(unsafe\), and \(H\) is \(\delta-unsafe\) if \(H^d\) can reach \(unsafe\). 
 \end{enumerate}
 \subsection{Controller with Partial Dynamics}
 A finite transition system describing the passing manuever is given in UPPAAL (or NuSMV).
