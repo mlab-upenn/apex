@@ -853,18 +853,6 @@ The per-iteration complexity of HD2 is O(m) (Thm 1).
   Timestamp                = {2006.03.07}
 }
 
-@InProceedings{BensalemBKT04rv,
-  Title                    = {Testing conformance of real-time applications with automatic generation of observers},
-  Author                   = {S. Bensalem and M. Bozga and M. Krichen and S. Tripakis},
-  Booktitle                = {Proceedings of Runtime Verification Workshop},
-  Year                     = {2004},
-
-  Address                  = {Barcelona, Spain},
-  Month                    = Apr,
-
-  Timestamp                = {2007.05.11}
-}
-
 @Book{BergSKO00,
   Title                    = {Computational Geometry: Algorithms and Applications},
   Author                   = {Mark de Berg and Otfried Schwarzkopf and Marc van Kreveld and Mark Overmars},
@@ -2520,26 +2508,6 @@ Read More: http://epubs.siam.org/doi/ref/10.1137/120882913}
   Volume                   = {3927},
 
   Keywords                 = {robust testing},
-  Timestamp                = {2006.01.21}
-}
-
-@InProceedings{Girard2005c,
-  Title                    = {Approximate bisimulations for nonlinear dynamical systems},
-  Author                   = {Antoine Girard and George J. Pappas},
-  Booktitle                = {Proceedings of 44th IEEE Conference on Decision and Control and European Control Conference},
-  Year                     = {2005},
-  Pages                    = {684-689}
-}
-
-@TechReport{GirardP_tech05,
-  Title                    = {Approximation metrics for discrete and continuous systems},
-  Author                   = {Antoine Girard and George J. Pappas},
-  Institution              = {Dept. of CIS, Univ. of Pennsylvania},
-  Year                     = {2005},
-  Month                    = {May},
-  Number                   = {MS-CIS-05-10},
-
-  Owner                    = {SaMaTaS},
   Timestamp                = {2006.01.21}
 }
 
@@ -6178,47 +6146,6 @@ Read More: http://epubs.siam.org/doi/ref/10.1137/120882913}
   Location                 = {Tuscan},
   Owner                    = {SaMaTaS},
   Timestamp                = {2006.11.21}
-}
-
-@InProceedings{WongpiromsarnMML09hscc,
-  Title                    = {Periodically Controlled Hybrid Systems},
-  Author                   = {Tichakorn Wongpiromsarn and Sayan Mitra and Richard M. Murray and Andrew G. Lamperski},
-  Booktitle                = {Hybrid Systems: Computation and Control},
-  Year                     = {2009},
-  Pages                    = {396-410},
-  Series                   = {LNCS},
-  Volume                   = {5469},
-
-  Bibsource                = {DBLP, http://dblp.uni-trier.de},
-  Ee                       = {http://dx.doi.org/10.1007/978-3-642-00602-9_28}
-}
-
-@InProceedings{WongpiromsarnTM10hscc,
-  Title                    = {Receding horizon control for temporal logic specifications},
-  Author                   = {Wongpiromsarn, Tichakorn and Topcu, Ufuk and Murray, Richard M.},
-  Booktitle                = {Proceedings of the 13th ACM international conference on Hybrid systems: computation and control},
-  Year                     = {2010},
-
-  Address                  = {New York, NY, USA},
-  Pages                    = {101--110},
-  Publisher                = {ACM},
-
-  Doi                      = {http://doi.acm.org/10.1145/1755952.1755968},
-  ISBN                     = {978-1-60558-955-8},
-  Location                 = {Stockholm, Sweden}
-}
-
-@InProceedings{WongpiromsarnEtAl2011hscc,
-  Title                    = {TuLiP: a software toolbox for receding horizon temporal logic planning},
-  Author                   = {Wongpiromsarn, Tichakorn and Topcu, Ufuk and Ozay, Necmiye and Xu, Huan and Murray, Richard M.},
-  Booktitle                = {Proceedings of the 14th international conference on Hybrid systems: computation and control},
-  Year                     = {2011},
-  Pages                    = {313--314},
-  Publisher                = {ACM},
-
-  Keywords                 = {linear temporal logic, receding horizon control},
-  Location                 = {Chicago, IL, USA},
-  Numpages                 = {2}
 }
 
 @Article{WoodZ96lipschitz,

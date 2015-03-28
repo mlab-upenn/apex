@@ -2451,32 +2451,12 @@ Read More: http://epubs.siam.org/doi/ref/10.1137/120882913}
   Timestamp                = {2006.01.21}
 }
 
-@InProceedings{Girard2005b,
-  Title                    = {Approximate bisimulations for constrained linear systems},
-  Author                   = {Antoine Girard and George J. Pappas},
-  Booktitle                = {Proceedings of 44th IEEE Conference on Decision and Control and European Control Conference},
-  Year                     = {2005},
-  Pages                    = {4700-4705}
-}
-
 @InProceedings{Girard2005c,
   Title                    = {Approximate bisimulations for nonlinear dynamical systems},
   Author                   = {Antoine Girard and George J. Pappas},
   Booktitle                = {Proceedings of 44th IEEE Conference on Decision and Control and European Control Conference},
   Year                     = {2005},
   Pages                    = {684-689}
-}
-
-@TechReport{GirardP_tech05,
-  Title                    = {Approximation metrics for discrete and continuous systems},
-  Author                   = {Antoine Girard and George J. Pappas},
-  Institution              = {Dept. of CIS, Univ. of Pennsylvania},
-  Year                     = {2005},
-  Month                    = {May},
-  Number                   = {MS-CIS-05-10},
-
-  Owner                    = {SaMaTaS},
-  Timestamp                = {2006.01.21}
 }
 
 @InProceedings{GiunchigliaT99ecp,
