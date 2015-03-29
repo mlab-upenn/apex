@@ -1,0 +1,66 @@
+\section{Agent models}
+\label{HCHA}
+
+In this section we define the mathematical models of agents involved in a scenario: Hierarchical Communicating Hybrid Automata (HCHA).
+Not all agents will require the full generality of HCHA, but having a general model allows us to specialize it in various ways to suit the agent and the scenario. 
+In addition, it will be possible for us to abstract from the HCHA to system models that are amenable to the formal verification techniques at our disposal. 
+As noted in the introduction, the execution of an autonomous plan involves many levels of abstraction. The verification must cover all these levels.
+
+We start with a few basic elements:
+an agent (of one of the types described above) has a state vector $\stPt \in \reals^n$.
+(Different agents may have different dimensions.)
+The state includes all information of relevance to the system designers.%: for the ego vehicle, this will typically include position and velocity, but also fuel combustion rate and wall-wetting effects if needed.
+%For a traffic light (which is an agent of type \texttt{trafficSignage}), the state might include the current active light and a clock that measures the delay between light switches.
+An agent is modeled as a \emph{communicating} hybrid automaton.
+
+\begin{defn}[Communicating hybrid automaton]
+	\label{def:CHA}
+A driven \textbf{communicating hybrid automaton} (CHA) $\Sys$ with inputs in $\inpSet$ 
+is a tuple 
+\[\Sys = (\stSet, \modeSet, E, Inv, \{F_\mode\}_{\mode \in \modeSet}, \guard, \reset, \funcOut, C)\]
+where 
+\begin{itemize}
+	\item $\stSet \subseteq \Re^n$ is the continuous state space of the system.
+	\item $\modeSet \subset \Ne$ is a finite set of control locations that the system switches through. 
+	\item $\hsSet \triangleq \modeSet \times \stSet$ is then the hybrid state space.
+	\item $F_\mode : \stSet \times \inpSet \rightarrow \Re^n$ defines a differential inclusion governing the evolution of the state in location $\mode$: $\dot{\stPt} \in F_\mode(\stPt,u)$. 
+	\item $Inv : \modeSet \rightarrow 2^\stSet$ defines an invariant condition on the state while in location $\mode$: $\stPt \in Inv(\mode)$.
+	\item $E \subseteq \modeSet \times \modeSet$ is the set of location transitions (a.k.a. switches, or jumps).
+	%
+	\item $\guard : E \rightarrow 2^\stSet$ is the guard condition that enables a location transition. 
+	Namely, the system switches between $\mode _i$ and $\mode _j$ when the state $\stPt$ is in $\guard((\mode_i,\mode _j))$.
+	%
+	\item $\reset : E \times \stSet \rightarrow \modeSet \times \stSet $ is a reset map that, given a transition $e = (\mode _i,\mode _j) \in E$ and a point $x$ on the guard $\guard(e)$, maps $x$ to a point $x^+$ in the invariant set of the next location $\mode_j$:
+	\[\reset: ((\mode _i,\mode _j),x) \rightarrow (\mode_j,x^+)\;, x^+ \in Inv(\mode_j)\] 
+	%
+	\item $\funcOut: \reals^n \rightarrow \reals^p$ is an output function,
+	\item $C = \{c_1,\ldots,c_{p_C}\}$ is a set of $p_C \in \Ne$ perception conditions (defined below).	
+\end{itemize}
+\end{defn}
+
+The differential inclusion $F_\mode$ in each location of the CHA models the continuous-time closed-loop behavior of the physical controlled systems.%, e.g., the electromechanical systems of the car such as the powertrain.
+The state $\stPt$ captures all the relevant information about the agent's dynamics. 
+It is widely recognized now that different navigation situations call for different control laws.
+\todo[inline]{cite}
+This is modeled by the locations of the CHA: each location represents the application of a different control law that is appropriate for the situation.
+
+\input{executionsOfHA}
+
+\input{exampleHCHA}
+
+\input{abstractionLevelsOfHCHA}
+
+\input{thmAbstractionLevels}
+%
+%\input{inputsPerceptionConditions}
+%
+%It should be noted here that the above definitions define a mathematical model of an agent, and not a programming language for autonomous agents. 
+%I.e. we are not concerned with how such agents are simulated, or how interrupts and error conditions (like violation of invariants) are handled in a software package that implements HCHAs.
+%The reader interested in such details can consult, for example, the Charon literature.
+%\footnote{Charon is a formal programming implementation of hierarchical communicating hybrid automata, although the systems they model have some differences with the ones defined here. Covering these differences is outside the scope of this paper.}
+%\todo[inline]{cite charon}
+%\todo[inline]{Ptolemy}
+%\todo[inline]{Loos on parametrized arch views}
+%
+%{\it HCHA can be translated to various other formalisms. We consider the case of timed automata, and of ODEs (i.e. dynamical systems).}
+

@@ -1,0 +1,30 @@
+\subsection{Handoff between scenarios}
+\label{scenarioHandoff}
+
+The agents in a scenario need to be initialized when a scenario starts, and $Init$ gives the set of valid initializations for each agent's state.
+Consider a mission $M = s_1 s_2$ with $s_i = (\agentInstanceSet_i,\behavior_i, \Lc_i, Init_i, \exitConditions_i)$, $i=1,2$,
+and where the state of $s_1$ maps to that of $s_2$ by a map $\pi$.
+the exit conditions $\exitConditions_0$ initializes $s_1$. 
+I.e. if $x_k$ is the state of the $k^{th}$ agent in $A_2$, then the initial set for $x_k$ is $\pi(L(\exitConditions_1))$,
+where $L(\exitConditions_1)$ is the union of the languages of the formulae in $\exitConditions_1$, i.e. 
+\[L(\exitConditions_1) = \cup_{\formula \in \exitConditions_1}L(\formula)\]
+For this to be a valid initialization, it must hold that 
+\begin{equation}
+\label{eq:exitInitialize}
+\pi(L(\exitConditions_1)) \subset Init
+\end{equation}
+
+Another condition for a valid handoff is that no new laws enter in effect in the new scenario which immediately invalidate the current behavior of the vehicle, i.e. it must hold that 
+\begin{equation}
+\label{eq:lawInitialize}
+x_1(t_{handoff}) \models \lawSet_1 \implies x_1(t_{handoff} \models \lawSet_2)
+\end{equation}
+where $t_{handoff}$ is the time at which scenario $s_1$ hands off to scenario $s_2$.
+
+Note that \eqref{eq:exitInitialize}, \eqref{eq:lawInitialize} are not verification assumptions.
+Rather, they are part of what needs to be verified. 
+A violation of either one indicates that the mission can not be completed as described.
+
+\begin{exmp}[Lane change contiued]
+	
+	\end{exmp}

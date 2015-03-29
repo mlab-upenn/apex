@@ -1,0 +1,115 @@
+\subsection{Decomposing a mission into scenarios and agents}
+\label{scenarios and agents}
+To motivate our thinking about the problem of safe autonomous navigation, we consider the case of a trip between two designated points.
+On such a trip, the autonomous car will face a number of situations, or \emph{scenarios}, which it must know how to recognize, enter, negotiate, and exit in a safe and timely manner.
+For example, the car will encounter roundabouts, 
+traffic lights and four-way intersections, 
+on-ramps to highways, 
+lane changes, 
+pedestrians,  
+and various traffic signals like speed limits, school zones, etc.
+We therefore think of a driving mission as an \emph{ordered sequence of scenarios}.
+The exact sequence that will be encountered is not known ahead of time. 
+%For example, it is not known whether some road has a large pothole that must be avoided.
+Moreover, it is clear that some scenarios, like traffic lights, will be encountered more than once, albeit with minor site-specific differences. 
+The key observation however is that the diversity of scenarios is, to a first order of approximation, finite. 
+That is, there is a recognizable, finite set of scenario \emph{types} that is sufficient to describe most autonomous navigation missions.
+The remaining variability among scenarios can be parametrized: e.g., the number of cars at a roundabout, or the current speed limit.
+
+To formally define a scenario, we first outline its elements.
+First, within each scenario, we can recognize a recurring set of entities: 
+the autonomous vehicle whose operation we seek to verify (a.k.a. the \emph{ego} vehicle), the other vehicles on the road, pedestrians, traffic signage, and the road network itself. 
+We will refer to these as \emph{agents}: an agent is an entity that functions continuously and autonomously in the environment, and whose presence can be sensed by other agents. 
+\todo[inline]{main literature for agents}
+Formally, we recognize the following set of four agent \emph{types}, whose semantics are given in the next section.
+\[\agentTypeSet = \{\texttt{vehicle, pedestrian, road, trafficSignage}\}\]
+Each agent type can have many (parametrized) instances, e.g. $\texttt{trafficSignage}$ can have instances speedLimit(70mph), speedLimit(25mph), HOVLane(3pm-6pm).
+We denote the set of instances of agents in $\agentTypeSet$ by $I(\agentTypeSet)$.
+Clearly, $I(\agentTypeSet)$ is infinite.
+When we just speak of an agent, we mean an agent instance.
+
+Formally, we define a scenario instance as follows. 
+The elements of a scenario will be formally defined in the following sections.
+\begin{defn}[Scenario instance]
+	A scenario instance is a tuple $(\agentInstanceSet,\behavior, \lawSet, \Phi, Init, \exitConditions)$ where
+\begin{itemize}
+	\item $A$ is a collection of agent \emph{instances} from the set $I(\agentTypeSet)$.
+	The set $\agentInstanceSet$ always includes the ego vehicle, i.e., the system whose behavior we want to verify.
+	%
+	\item $\behavior = \{\behavior_a \sut a \in \agentInstanceSet \setminus \{egoVehicle\}\}$ is a bounded-time behavior description for each of the other agent instances.
+	Describing the behavior $\behavior_a$ of an agent instance requires us to formally describe an agent. 
+	We do so in Section \ref{HCHA}.
+	What assumptions we make on the behavior of other vehicles is captured in $\behavior$.
+	%
+	\item $\lawSet = \{l_0,\ldots,l_p\}$ is a finite set of $p \in \Ne$ traffic laws. 
+	A law $l_i$ is a temporal logic formula indicating how the law constrains the behavior of the ego vehicle, but not the other agents. 
+	I.e. it is a specification on the ego vehicle that must be satisfied. 
+	% 
+	\item $\Phi$ is a set of goals that must be met by the ego vehicle while in this scenario. 
+	Now $\Phi$ and $\lawSet$ may both be expressed as (temporal) logic specifications on the system's behavior and therefore may be grouped together as one set.
+	However it helps to keep these two aspects of the scenario separate: 
+	that laws are constraints on the vehicle's behavior, and scenario goals are objectives to be met.
+	%
+	\item $Init$ is an initialization of the scenario, which defines a valid initial set of states for the agents when the scenario starts. $Init$ is formally defined in the next section.
+	% 
+	\item $\exitConditions$ is a set of condition describing how and when the scenario ends.
+	The conditions are described as temporal logic formulae with atomic propositions on the states of the agents in the scenario.
+	The formulae are required to be satisfiable by finite prefixes.
+	That is, for any formula $\formula \in \exitConditions$, if there exists a trace $\sttraj$ of the system that satisfies $\formula$, then there exists a finite prefix of $\sttraj$ that satisfies $\formula$.
+\end{itemize}
+Let $\Sc = \{s_0,s_1,\ldots,s_{N-1}\}$ be a set of scenario instances. 
+Then \textbf{a mission} $M$ is a finite string on $\Sc$, $M \in \Sc^*$.
+\end{defn}
+
+\todo[inline]{mission as an automaton?}
+
+The logic in which a law $l_i$ or exit condition $\formula_i$ is expressed will depend on the formalism used to model the scenario's agents. 
+We will have more to say about this in the following sections.
+
+Because a mission is a sequence of scenarios, if we can verify the safety of the autonomous system's behavior in each scenario,
+and compose the scenarios in a safe manner, 
+then we have verified that the mission is safe.
+In the rest of this paper we formalize the correct composition of scenarios and illustrate it with a case study in Section \ref{caseStudy}.
+Note that in this paper, we do not study how to \emph{generate} missions for verification. 
+Rather we assume that we are given mission to be verified. 
+The problem of mission generation and verification coverage will be the subject of future research.
+
+\begin{prob}[Correct composition of scenarios]
+	
+	\end{prob}
+
+
+\begin{exmp}[Lane change continued]
+	The mission can be decomposed into the following scenarios:
+	$M = $ DriveStraight, ChangeLane, PassOnTheLeft, StopAtFourWayIntersection.
+	Each of these scenarios contains two instances $v_{ego}$ and $v_2$ of the \texttt{vehicle} agent type, one \texttt{road} agent instance, no \texttt{pedestrian}s and one \texttt{trafficSignage} agent.
+	The behavior $\behavior_{v_2}$ is given by a sequence of reach sets as detailed in Section \ref{otherAgents};
+	briefly, $\behavior_{v_2}$ gives the area occupied by $v_2$ at any moment in time.
+	An example applicable law, expressed in discrete time LTL, is $l \defeq \always(position_{ego} = a \implies X position_{ego} \geq a)$, to indicate that backing up is not allowed.
+	Note that LTL is not ideally suited for this requirement since we need one formula per speed threshold $a$. A more concise logic (e.g., TPTL \cite{alur94_really}) would allow us to directly say $l \defeq \always(position_{ego}(t+1) \geq position_{ego}(t))$, while still being reasonably computationally tractable.
+		
+	There are two exit conditions for the DriveStraight scenario: either the ego vehicle reaches the end of the current road segment (i.e. , it reaches the intersection). 
+	Or, it gets too close to the leading vehicle $v_2$, in which case it must exit and scenario ChangeLane begins.
+	The $Init$ set for ChangeLane is the union of two sets $Init_1$ and $Init_2$.
+	$Init_1$ is the set of 2D positions on the road where $v_ego$ is behind $v_2$ and within some distance $d_{min}$ of $v_2$.
+	$Init_2$ is the set of 2D positions of $v_{ego}$ that are some distance $d_{turn}$-close to the intersection.
+	I.e., we consider the lane change to be provoked by excessive proximity to the leading vehicle $v_2$, or by proximity to the intersection.	
+\end{exmp}
+
+It should be noted that the initialization of a scenario may have a mission-dependent part, like $Init_2$ in the example.
+This highlights the need to do verification \emph{in the context of the mission}, as the context provides information on what needs to be verified.
+	
+%	E.g an instance of scenario $s_0$ (Roundabout) might have the agents 
+%	\begin{eqnarray*}
+%		\agentInstanceSet = \{&egoVehicle, otherVehicle1, rndAbt(3), \\ 
+%		& speedLimit(25mph)\} \subset I(\agentTypeSet)
+%	\end{eqnarray*}
+%	where $egoVehicle$ and $otherVehicle1$ are instances of type $\texttt{vehicle}$, 
+%	$rndAbout(n)$ is an instance of $\texttt{road}$ indicating a round-about with $n$ entry points (which are also exit points),
+%	and $speedLimit(Vmph)$ is an intance of $\texttt{trafficSignage}$ indicating a speed limit sign that reads $V$ mph.
+%	Another scenario instance has the agents
+%	\begin{eqnarray*}
+%		\agentInstanceSet = \{&EgoVehicle, OtherVehicle1, rndAbt(2), \\ 
+%		& speedLimit(35mph)\} \subset I(\agentTypeSet)
+%	\end{eqnarray*}
+%	

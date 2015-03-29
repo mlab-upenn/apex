@@ -1,0 +1,18 @@
+\subsection{Completing a mission}
+\label{missionSatisfaction}
+What does it mean for an HCA to complete a mission?
+It means that any trace of the HCA satisfies the \emph{sequence} of specifications presented by the scenarios in the mission.
+
+\begin{thm}[Mission satisfaction]
+	If Model M1 of concrete system Mc satisfies specs $\formula_1$ of scenario S1, and model M2 of Mc satisfies specs $\formula_2$ of scenario S2, and both M1 and M2 over-approximate Mc, 
+	then any trace of Mc that goes through both scenarios in that order will satisfy the sequence of specs $\formula_1 \cdot \formula_2$.
+	
+	If a trace of M1 exits S1 without satisfying scenario goals $\formula_1$ (e.g. was interrupted by intersection), then what we can say depends on whether M2 is more or less abstract than M1.
+	Suppose the trace goes from S1 to S2 to S1 again.
+	\begin{itemize}
+		\item if M2 is less abstract than M1, then by definition of abstraction its behavior can be mapped to a behavior of M1 since $L(M_1) \supset L(M_2)$. So I have a full trace of M1.
+		\item if M2 is more abstract, tehn I can't do this mapping and I have a gap in the M1 execution: $x_1 in s1$, gap, $x_2 in s1$. 
+		The verification then might give false positives because of gap.
+		So if we get a counter-example in this case, must concretize gap  (refine M2) to see if cex is spurious or not.
+	\end{itemize}
+\end{thm}

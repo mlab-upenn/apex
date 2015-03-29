@@ -1,0 +1,15 @@
+\subsection{The benefits of scenario decomposition}
+\label{mixingFormalisms}
+
+By decomposing each mission into scenarios, and defining valid handoff conditions between scenarios, we are free to choose the best formalism and tools available for verifying each scenario.
+For example, consider the Lane Change running example, where there is a transition between a DriveStraight scenario and a ChangeLane scenario.
+The concrete car dynamics for the ego vehicle are given by a forced 7-dimensional nonlinear ODE, 
+Direct formal verification of this model is not possible. 
+However, during the DriveStraight scenario, it is possible to over-approximate these dynamics, and run a timed automata verification tool to model check the resulting system.
+This is done in Section \ref{caseStudy}.
+
+In the ChangeLane scenario, bowever, the accuracy of the concrete, un-approximated dynamics is necessary.
+The over-approximation done in DriveStraight scenario becomes too conservative. 
+In such a scenario, we can run a reachability tool to verify the correctness of the vehicle's behavior.
+Even though reachability analysis is, in general, an expensive operation, we are only running it to verify select scenarios that require the complex concrete dynamics.
+Thus, by decomposing a mission into scenarios, then correctly composing the scenarios' verification results, we can verify the entire mission.

@@ -1,0 +1,33 @@
+\subsection{Scenario Description}
+\label{scenarioDescription}
+Lane change maneuver scenario occurs on a 2 lane road with the target vehicle and 1 environmental vehicle. The target vehicle must change lanes in order to get into the left turn lane before the end of the scenario.
+\subsection{Target Vehicle Model}
+\subsubsection{Vehicle Dynamics}
+Target vehicle plant has nonlinear dynamics described by bicycle model.
+	\begin{equation}
+	\begin{aligned}
+	\ddot{\beta}=\left(\frac{C_rl_r-C_fl_f}{mv^2} \right)\dot{\psi}+\\
+	\left(\frac{C_f}{mv} \right)\delta-\left(\frac{C_f+C_r}{mv} \right)\beta+y_{\beta}
+	\end{aligned}
+	\end{equation}
+	\begin{equation}
+	\begin{aligned}
+	\ddot{\psi}=\left(\frac{C_rl_r-C_fl_f}{I_z} \right)\beta-\\
+	\left(\frac{C_fl_f^2-C_rl_r^2}{I_z} \right)\left(\frac{\dot{\psi}}{v} \right)+
+	\left(\frac{C_fl_f}{I_z} \right)\delta+y_{\dot{\psi}}
+	\end{aligned}
+	\end{equation}
+	\begin{equation}
+	\dot{v}=a_x+y_v
+	\end{equation}
+	\begin{equation}
+	\dot{s_x}=v\cos{\beta+\psi}+y_{s_x}
+	\end{equation}
+	\begin{equation}
+	\dot{s_y}=v\sin{\beta+\psi}+y_{s_y}
+	\end{equation}
+	\begin{equation}
+	\dot{\delta}=v_w+y_d
+	\end{equation}
+	
+	\(C_f,C_r\) and \(l_f, l_r\) describe respectively the cornering stiffness and distances from the center of gravity to the axles. \(I_z\) is the moment of inertia and \(m\) is the vehicle mass. \(\beta\) is the slip angle at the center of mass, \(\psi\) is the heading angle, \(\dot{\psi}\) is the yaw rate, \(v\) is the velocity, \(s_x\) and \(s_y\) are the x and y positions, and \(\delta\) is the angle of the front wheel. In the formulation of [6], the inputs to the system are \(a_x\), the logitudinal acceleration, and \(v_w\) the rotational speed of the steering angle. The \(y\) terms represent disturbances to the system. For example \(y_{\beta}\) and \(y_{\dot{\psi}}\) represent disturbances to the slip angle at the center of mass and the yaw rate. 

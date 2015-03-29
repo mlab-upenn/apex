@@ -1,0 +1,18 @@
+\subsection{Environmental Vehicle Model}
+\label{caseStudyEnv}
+\subsubsection{Vehicle Dynamics}
+Environmental vehicle has simple 2D dynamics, no specific controller, non-determinism describes state evolution. When considering other agents (especially vehicles) in a scenario such non-linear dynamics are completely unnecessary. The primary reasoning is that the uncertainty about the state of other vehicles is not do to poor model parameter identification, but rather unknown inputs [2]. The dynamics of the other agents are described by equations (7) and (8) as in [3]:
+\begin{equation}
+\dot{s_x}=v\cos{\beta}
+\end{equation}
+\begin{equation}
+\dot{s_y}=v\sin{\beta}
+\end{equation}
+
+\subsubsection{Environment Assumptions}
+\begin{enumerate}
+	\item Environmental vehicle must drive forwards.
+	\item Environmental vehicle must not change lanes if other lane is occupied.
+	\item At every step the environmental vehicle can apply +/- some specified level of acceleration.
+	\item At every step environmental vehicle can switch lanes if condition 2 is not violated.
+\end{enumerate}
