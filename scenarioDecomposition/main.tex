@@ -1,0 +1,49 @@
+\documentclass[11pt, oneside, reqno]{article}
+\usepackage{amssymb, amsthm, amsmath, amsfonts}
+%\parindent=0pt
+
+
+\usepackage{float}
+\floatstyle{boxed}
+\newfloat{pseudocode}{h}{lop} %{chapter}
+\floatname{pseudocode}{\textbf{Algorithm}}
+\usepackage{amstext}
+\usepackage{algorithmic}
+\usepackage{fainekos-macros}  
+\usepackage{amsbsy}
+\usepackage{graphicx}
+\usepackage{todonotes}
+\usepackage{enumerate}      
+\usepackage{fixltx2e}
+\newcommand{\agentInstanceSet}{A}
+\newcommand{\agentTypeSet}{\Ac}
+\newcommand{\scenarioSet}{S}
+\newcommand{\lawSet}{\Lc}
+\newcommand{\constraints}{\Lc}
+\newcommand{\goal}{\varphi_{goal}}
+\newcommand{\pgoal}{p_{goal}}
+
+\graphicspath{{figures/}}
+
+\begin{document}
+
+\title{Scenario decomposition for autonomous plan verification}
+\author{Houssam Abbas}
+\date{\today}
+\maketitle
+\tableofcontents
+
+\input{introduction}
+\input{scenariosAndAgents}
+\input{example}
+
+\appendix
+\input{bikeModelAlthoff}
+
+
+\bibliographystyle{abbrv}
+\bibliography{emsoft15,mok}
+
+
+
+\end{document}

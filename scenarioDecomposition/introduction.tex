@@ -1,0 +1,61 @@
+\section{Introduction}
+\label{introduction}
+
+\subsection{Overview of the approach}
+To motivate our thinking about the verification of autonomous vehicles, consider a typical journey taken between two points:
+on a typical trip, the autonomous vehicle will find itself in a sequence of situations, or \emph{scenarios}, like a parking lot, a side street, a light-controlled intersection, a highway, etc.
+It must enter, negotiate and exit such scenarios in a safe and timely manner.
+
+In our approach, we start from a list of the most common scenarios. 
+We emphasize that these scenarios are defined by \emph{us, the verification engineers}.
+We do not yet require that the Autonomous Vehicle (AV) itself recognize these scenarios.
+
+Given this list of scenarios, we identify the constraints, or specifications, that the AV must satisfy in each one.
+For example, it must not collide with other cars. 
+In a roundabout scenario, it must also go through the roundabout within a certain amount of time.
+We also identify the set of other agents (other cars, traffic signs, pedestrians) that might be present.
+Each such scenario is modeled and verified in the formalism most appropriate for the task. 
+While we advocate for the use of formal methods wherever possible, we recognize that these methods have various limitations, and that other approaches may be applicable in given scenarios.
+
+Given this library of pre-verified scenarios, we next define conditions under which one scenario can \emph{hand-off} to another scenario. 
+That is, conditions under which (a segment of) the AV's trip can be decomposed into two scenarios from the pre-verified library, such that the overall trip is also verified as being correct.
+Once these hand-off conditions are identified, we verify that they hold.
+
+We do this hand-off verification first for given pairs of scenarios. 
+Then, we develop a simple algorithm for decomposing the journey into $M>0$ pre-verified scenario sequences of various lengths, such that each such sequence is verified.
+
+This approach raises a number of challenging and interesting questions, which we outline.
+
+The rest of this report describes each step above in more detail. 
+The rest of this Introduction continues with a high-level discussion of the technical challenges and design choices we make. In Section \ref{scenarios and agents} starts the technical material.
+
+\subsection{Challenges}
+\label{sec:challenges}
+The first challenge is operation in a highly unpredictable environment.
+For example, what will traffic conditions be, how will other drivers behave and will they obey the laws, will certain parts of the road be inaccessible, and will there be emergency responders on the road needing right of way? 
+Note that these uncertainties occur at several time scales, from the long-term (traffic conditions) to the very short-term (emergency responders driving by).
+Therefore the on-board controller(s) must always decide: what is the vehicle's goal in the short run?
+The fact that the AV must decide on its current goal at all times will be important in what follows, specifically in Section \ref{sec:scenario correctness}.
+
+Also important is the fact that the number of agents in a scenario can vary: how do we verify a scenario for a \emph{range} of number of agents?
+Non-determinism in the modeling can help in some cases, and in others, we will just have to repeat the verification for each number of agents.
+We address this challenge in Section \ref{sec:varying nb agents}.
+
+The third challenge is that task execution must satisfy different types of constraints, like safety, comfort to the passengers and performance.
+Alternatively, these can be viewed as three objectives to be maximized.
+Depending on the scenario, these \emph{may} need different models of the system \footnote{By `system', we mean the AV, the road and the other agents in the environment, like pedestrians and cars.}
+to express them and verify them.
+How can verification results from one formalism be ported over to another formalism, so a coherent view of the system's operation arises?
+To address this challenge, we make heavy use of \emph{abstraction}: a model $M$ abstracts from model $M'$ if all behaviors of $M'$ can be reproduced by $M$.
+Abstraction allows us to use many models of the system in a rigorous manner.
+
+\subsection{Preliminaries}
+It is important to stress at the outset that we choose not to impose \emph{one} mathematical model in which to model \emph{all} scenarios.
+That is because different scenarios may require different models: for example, when verifying a dynamic maneuver like a lane change, it is important to work with the accurate nonlinear dynamics of the cars.
+On the other hand, when verifying an intersection, it is appropriate to work with a discrete model of the cars to analyze the decisions made by the autonomous vehicle. In yet another case, the controller of the car, which is an \emph{input} to the verification task, may impose a formalism, like a rule-based system or a decision tree.
+
+The theory and tools we develop for scenario composition must accommodate this variety of formalisms. 
+As a result, in what follows, we speak of agents without specifying their syntax or semantics, beyond what is needed for discussing scenario composition.
+
+In the interest of brevity, the presentation style is necessarily terse. 
+An illustrative example concludes the report to illustrate the various concepts. 

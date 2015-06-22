@@ -1,0 +1,301 @@
+\section{Decomposing a mission into scenarios and agents}
+\label{scenarios and agents}
+
+\begin{defn}[Agents]
+	There are three agent types:
+	\[\agentTypeSet = \{\texttt{vehicle, pedestrian, trafficSignage}\}\]
+	For convenience, agents of types  \texttt{vehicle} and \texttt{pedestrian} are called \emph{mobile agents}. 
+	
+	The \emph{ego vehicle} is the autonomous vehicle whose behavior we wish to verify, and is of type \texttt{vehicle}.	
+\end{defn}
+	
+	Each agent type can have many (parametrized) \emph{instances}.
+	For example, agent $\texttt{trafficSignage}$ can have instances speedLimit(70mph), speedLimit(25mph), and HOVLane(3pm-6pm).
+	
+	Given a set of agent types $C \subset \agentTypeSet$, the corresponding set of agent instances is denoted by $I(C)$.
+When we just speak of an agent, we mean an agent instance with parameters specified.
+
+\begin{defn}[Agent state]
+	\label{def:agent state}
+An agent $a$ is identified with its state $x_a$. 
+The state belongs to some set $X_a$. 
+
+For agents $x_a$ of types \texttt{vehicle} and \texttt{pedestrian}, 
+\begin{itemize}
+	\item the state $x_a$ always includes a variable $p_a$ that gives the position of the agent in the world.
+	\item \emph{except for the ego vehicle}, all agents share the same state space $X_m$.
+\end{itemize}
+
+The ego agent's state $x_{ego}$ also always includes the current goal $g_{ego}$ being pursued by the vehicle (a goal is formally defined below in Def.\ref{def:goal}).
+
+A \emph{trajectory} $x_a(\cdot)$ of an agent gives the evolution of the agent's state as a function of time: $x_a(\cdot): \Re_+ \rightarrow X_a$.
+\end{defn}
+
+The specific formalism used to model the scenario will dictate the sets $X_a$.
+E.g., if $a$ is described by an ODE, then $x_a$ is a vector in $\Re^n$.
+If $a$ is a Deterministic Finite Automaton, then $x_a$ is one of a finite number of states.
+
+Definition \ref{def:agent state} says that regardless of formalism, the ego vehicle's state vector is always of the form:
+\begin{equation*}
+x_{ego} = \left[\begin{matrix}
+p_{ego}\\
+g_{ego}\\
+\vdots
+\end{matrix}\right]
+\end{equation*}
+
+\begin{defn}
+	\label{def:goal}
+	A \emph{goal} is a temporal logic formula of the form 
+	\[\goal := \eventually_{[0,T]} \pgoal\]
+	where $\eventually$ is the Eventually (or Future) operator, $T \geq 0$ is a real number, and 
+	$\pgoal$ is an atomic proposition, i.e. a state formula.
+	We call $T$ the \emph{horizon} of the scenario.
+\end{defn}
+In words, the goal always states that, sometime between times 0 and $T$, the proposition $\pgoal$ is satisfied.
+
+Formally, we define a scenario instance as follows. 
+\begin{defn}[Scenario instance]
+	A scenario instance is a tuple 
+	\[(\agentInstanceSet, Road,  \constraints, Init,  \goal)\]
+	 where
+\begin{itemize}
+	\item $A$ is a collection of agent \emph{instances} from the set $I(\agentTypeSet)$.
+	Because the ego vehicle is always present in a scenario, we simplify notation by considering that $\agentInstanceSet$ does not contain the ego vehicle.
+	%
+	\item The $Road$ models a \emph{bounded} road network, and for our purposes we may represent it as a 2-dimensional set: $Road \subset \Re^2$.
+	Particular implementations may use more compact or query-friendly representations.
+	%
+	\item $\constraints = \{\ell_0,\ldots,\ell_k\}$ is a finite set of constraints on the behavior of the ego vehicle.
+	These include traffic laws, but also other scenario-specific constraints like performance requirements and comfort requirements. These are expressed in whatever logic is appropriate.
+	% 
+	\item $\goal$ is a goal that must be met by the ego vehicle while in this scenario. 
+	It has the form $\goal := \eventually_{[0,T]} \pgoal$ where $\pgoal$ is an atomic proposition.
+	%
+	\item $Init$ is an \emph{initialization} of the scenario, which defines a valid initial set of states for the agents when the scenario starts. 
+	It is given by $Init = X_{ego}^0 \times \Pi_{a \in \agentInstanceSet} X_{a}^0$, where:
+	\begin{itemize}
+		\item $X_{ego}^0$ is the initial state set $X_{ego}^0 \subset X_{ego}$ of the ego vehicle. Because we want to allow non-determinism and model a range of situations, we allow the initial state of the ego vehicle to be in a set rather than at a fixed value.
+		\item $X_a^0$ are the initial state sets $X_a^0 \subset X_a$ of the other agents (other cars, pedestrians and traffic signs).
+	\end{itemize}
+	% 
+\end{itemize}
+The \emph{state of a scenario} $x_S$ simply refers to the combined states of all agents in the scenario
+	\[x_S = (x_{ego}, x_{a_1},\ldots,x_{a_{|\agentInstanceSet|}})\]
+The \emph{scenario system} $\Sys_S$ is the system whose state is $x_S$, evolving according to the semantics of the respective agents.
+The \emph{scenario state space} is then $X_S = X_{ego} \times \Pi_{a \in \agentInstanceSet} X_{a}$.
+For convenience, we also define the \emph{other agents state space} $X_A = \Pi_{a \in \agentInstanceSet} X_{a}$.
+\end{defn}
+
+
+Naturally, the goal $\goal$ and constraints $\constraints$ are properties of the ego vehicle's behavior, not the other agents' (although the state of the other agents may appear in these formulas).
+
+\begin{defn}[Journey]
+Let $\Sc = \{s_0,s_1,\ldots,s_{N-1}\}$ be a set of scenario instances. 
+A \textbf{journey} $J$ is a finite string on $\Sc$, that is, $J =  (s_{i_1},s_{i_2},\ldots,s_{i_t} )\in \Sc^*$, $s_{i_j} \in \Sc$.
+\end{defn}
+
+Because a journey is a sequence of scenarios, if we can verify the safety of the autonomous system's behavior in each scenario,
+and compose the scenarios in a safe manner, 
+then we have verified that the mission is safe.
+In the rest of this work we formalize the correct composition of scenarios.
+
+\section{Scenario correctness}
+\label{sec:scenario correctness}
+Consider a given scenario 
+\[S = (\agentInstanceSet,Road, Init, \constraints, \goal)\]
+with horizon $T$, scenario system $\Sys_S$, and state $x_S$.
+We say the scenario is correct if the following is true
+\begin{enumerate}[a.]
+	\item $x_S(0) \in Init$
+	\label{init}
+	\item For all $0 \leq t \leq T$, $g_{ego}(t) = \goal$,
+	\label{samegoal}
+	\item $\Sys_S \models \goal \land \lawSet$
+	\label{satisfaction}
+\end{enumerate}
+That is, the ego vehicle maintains the same goal the whole time (up to the horizon $T$ of the scenario), 
+and every trajectory of the system $\Sys_S$ evolves toward a state satisfying the goal while respecting the constraints.
+
+If $\Sys_S \models \goal$, where $\goal$ is given by $\eventually_{[0,T]} \pgoal$, then for every trajectory $x$ of $\Sys_S$ there exists a time $t_{sat}^S(x)$ at which the trajectory satisfies $\pgoal$.
+We call this the satisfaction time of $x$.
+
+Note we do not allow the car to change goals mid-scenario (condition \ref{samegoal}). 
+This is an assumption that will be relaxed later, but for now, and to provide a gentle introduction, we make this assumption.
+
+\subsection{Tools for scenario verification}
+In this sub-section, we give a list of (mostly formal) verification approaches that can be applicable to the verification of one scenario, i.e. that can verify the properties \ref{init}-\ref{satisfaction} above.
+The interesting case is \ref{satisfaction}; in particular, \ref{samegoal} is a special case of \ref{satisfaction} since it can be written as $\always_{[0,T]} g_{ego} = \goal$, 
+where $\always$ is the Always temporal operator.
+
+Property $\goal$ is a reachability property: it says that eventually, the state of the system reaches the set of states characterized by $\pgoal$.
+(Such properties are sometimes called liveness properties as well, thought the distinction needn't concern us).
+Applicable verification methods are: reachability analysis, model checking (for decidable system models like finite-state systems and certain classes of hybrid systems), finite-time stability methods (for appropriate system models, typically discrete-time nonlinear dynamical systems), and semi-formal testing-based approaches.
+
+\subsection{Merging scenarios}
+\label{sec:merging scenarios}
+Assume that correct scenarios $S^1$ and $S^2$ share the same goal $\goal$.
+Then 
+\[(\agentInstanceSet^1 \cap \agentInstanceSet^2, Road^1 \cap Road^2, Init^1 \cap Init^2, \lawSet^1 \cap \lawSet^2, \goal)\]
+is correct, provided none of the quantities in its definition is empty
+
+\section{Scenario hand-off}
+\label{sec:scenarion hand-off}
+Consider two scenario instances $S^1 = (\agentInstanceSet^1, Road^1, Init^1, \constraints^1, \goal^1)$
+and
+$S^2 = (\agentInstanceSet^2,Road^2, Init^2, \constraints^2, \goal^2)$.
+Assume both scenarios have been verified to be correct.
+For example, $S^1$ is ``Drive from parking spot to entrance of parking lot'' and $S^2$ is ``Exit parking lot by merging onto street''.
+And assume that we wish to verify that the autonomous car can perform these two scenarios in sequence: basically, that it can safely exit the parking lot.
+The question is: what does it mean to say that the autonomous vehicle can correctly navigate from scenario 1 to scenario 2?
+We call this a correct \emph{hand-off}.
+
+Intuitively, the hand-off is correct if, at the time the ego vehicle completes scenario $S^1$ (by satisfying its goal), it finds itself at the beginning of the road segment $Road^2$, having the new goal $\goal^2$, its state is in $Init_2.X_{ego}^0$, and the states $x_a$ of the other agents are in $Init_2.X_{a}^0$, respectively.
+This is the essence of Def. \ref{def:correct hand-off} below.
+
+A complication is introduced by the fact that the new scenario may introduce new vehicles (i.e., other agents) that are not part of the first scenario, and that vehicles from the first scenario are `still around' when the new scenario starts.
+Since the agents are part of a scenario's definition, we must study how to account for them.
+
+For the first issue (new vehicles), it is logical to consider that new vehicles do not play a role in determining the correctness of the hand-off. 
+This is captured in condition \ref{hand-off:initialization} of Def. \ref{def:correct hand-off}.
+
+The second issue (what to do with the vehicles from the first scenario) is a bit more subtle. 
+We define a \emph{relevance window}, which is a subset of the agents' state-space $X_A$.
+Intuitively, an agent whose state is in the relevance window can still affect the execution of the scenario and its ultimate correctness.
+Any $S^1$ agent that happens to be within the relevance window at the hand-off time must be accounted for in $\agentInstanceSet^2$. 
+This is captured in condition \ref{hand-off:agent survival} of Def. \ref{def:correct hand-off}. 
+
+\begin{defn}[Relevance window]
+	\label{def:relevance window}
+	Let $S^1$ and $S^2$ be two scenario instances,
+	and let $x_{ego} \in X_{ego}$.
+	Recall that all mobile agents share the same state space $X_m$.
+	A \emph{relevance window from $S^1$ to $S^2$ around $x_{ego}$}, $W(x_{ego}, S^1,S^2)$,  is a subset of the mobile agent state space $X_m$: $W(x_{ego}, S^1,S^2) \subset X_m$.
+\end{defn}
+It is hard to specify a relevance window: a proper specification will need to take into account the particular scenarios, the behavior of the other agents, and the goal of the current scenario.
+When in doubt, one should over-approximate it to maintain soundness of the verification procedure.
+
+\begin{defn}[Correct hand-off]
+	\label{def:correct hand-off}
+Consider two scenario instances $S^1 = (\agentInstanceSet^1, Road^1, Init^1, \constraints^1, \goal^1)$
+and
+$S^2 = (\agentInstanceSet^2,Road^2, Init^2, \constraints^2, \goal^2)$.
+For an $S^1$ system trajectory $x^1$, let $t_{x^1} = t_{sat}^{S^1}(x^1)$ be the satisfaction time of $x^1$ and let $x_h = x^1_{ego}(t_{x^1})$.
+The hand-off from $S^1$ to $S^2$ is correct if all the following hold:
+\begin{enumerate}
+	\item $Road^1 \cap Road^2 \neq \emptyset$
+	\label{hand-off:roads}
+	%
+	\item for all $S^1$ trajectories $x^1$, let $W(x_h,S^1,S^2)$ be the relevance window around the ego agent at time $t_{x^1}$. Then for all $a \in \agentInstanceSet^1$ such that $x^1_a(t_{x^1}) \in W(x_h,S^1,S^2)$, $a \in \agentInstanceSet^2$.
+	\label{hand-off:agent survival}
+	%
+	\item for all $S^1$ trajectories $x^1$, for all $a \in \agentInstanceSet^1$ such that $x^1_a(t_{x^1}) \in W(x_h,S^1,S^2)$, $x^1_a(t_{x^1}) \in Init^2.X_a^0$
+	\label{hand-off:initialization}
+	%
+	\item for all $S^1$ trajectories $x$, the controller of the ego vehicle issues the new goal equal to $\goal^2: g_{ego}(t_x) = \goal^2$.
+	\label{hand-off:new goal}
+\end{enumerate}
+
+\end{defn}
+In the above three equations, note that the hand-off conditions are required to be satisfied exactly at the time that the scenario is satisfied.
+This guarantees that there is no time gap during which non-verified behavior can occur.
+
+
+
+\section{Verifying a scenario hand-off}
+\label{sec:verifying hand-off}
+Given two pre-verified scenarios $S^1$ and $S^2$, how do we verify that their composition is correct according to Def. \ref{def:correct hand-off}?
+In this section we give formal expressions for the conditions of Section \ref{sec:scenarion hand-off}.
+
+We consider that the agent identifier $a$ is part of the agent state $x_a$, so we can write state propositions that use the identifier.
+Recall that the goal $\goal = \eventually_{[0,T]}\pgoal$.
+
+Condition \ref{hand-off:roads} is checked geometrically, and the details depend on the road representation as a geometric planar object.
+
+Condition \ref{hand-off:agent survival} can be expressed as follows:
+recall that $x_S = (x_{ego},x_{a_1},\ldots,x_{a_n})$ is the state of the system. 
+For each agent $a \in \agentInstanceSet^1$ define the atomic proposition $w_{a} := x_{a} \in W(x_{ego},S^1,S^2)$.
+Then Condition \ref{hand-off:agent survival} can be formulated as follows: 
+\begin{equation}
+\label{eq:formal hand-off:agent survival}
+\eventually_{[0,T]} \pgoal \land \always \left(\bigwedge_{a\in \agentInstanceSet^1} ((\pgoal \land  w_a) \implies a \in \agentInstanceSet^2 )\right)
+\end{equation}
+
+Condition \ref{hand-off:initialization} captures that the $S^1$ agents in the relevance window must satisfy the initialization conditions for $S^2$.
+
+This can be formally expressed as follows:
+\begin{equation}
+\label{eq:formal hand-off:initialization}
+\eventually_{[0,T]} \pgoal \land \always \left(\bigwedge_{a\in \agentInstanceSet^1} ((\pgoal \land  w_a) \implies x_a \in Init^2.X_a^0 )\right)
+\end{equation}
+Note that \eqref{eq:formal hand-off:agent survival} and \eqref{eq:formal hand-off:initialization} can be combined.
+
+Condition \ref{hand-off:new goal} can be expressed as
+\begin{equation}
+\eventually_{[0,T]} \pgoal \land \always(\pgoal \implies g_{ego} = \goal^2)
+\end{equation}
+
+\section{Building a pre-verified journey}
+\label{sec:detecting hand-off}
+In the previous section we presented a situation where both scenarios were given, and the verification tool's task was to verify that the hand-off between the two is correct.
+
+We expect that a more typical situation is when the following is given as input to the verification tool:
+\begin{itemize}
+	\item An entire road network $Road$
+	\item The starting point $START$ and destination $DEST$ of the journey, as points in $Road$
+	\item The other agents $A$ that start the journey with the ego vehicle, and those that are on the \emph{Road} at any moment in time.
+	\item The laws and requirements applicable on different segments of the \emph{Road}.
+\end{itemize}
+
+The verification tool has access to a library $L$ of pre-verified scenarios: 
+$L = \{V^1,V^2,\ldots,V^k\}$.
+The verification tool will need to identify the starting scenario out of those in $L$. 
+Let that be $S^1$.
+Then iteratively, for every $i \geq 1$, the tool will identify scenarios $S \in L$ such that the hand-off from $S^i$ to $S$ is correct per Def \ref{def:correct hand-off}.
+Set $S^{i+1} = S$.
+The process continues until $DEST$ is reached, i.e. until the tool can hand-off to a scenario $S^t$ such that $\goal^t = \eventually_{[0,T_t](p_{ego} \in Dest)}$.
+This gives the verified journey $M = (S^1,S^2,\ldots,S^t)$.
+
+Note that the problem of journey generation and verification coverage will be the subject of future research.
+
+\subsection{Multiple matches}
+Let $S^i$ be the current scenario in a journey verification.
+It can happen that more than one scenario provide a correct hand-off from $S^i$, say $V^1,V^2,V^3$.
+By definition of a correct hand-off, all three $V^j$'s share the same goal $\goal$.
+In such a case, the verification tool must build the journey along all three matches. That is, it must now build three journeys:
+\begin{eqnarray*}
+J_1  = (S^1,\ldots,S^i,V^1)
+\\
+J_2  = (S^1,\ldots,S^i,V^2)
+\\
+J_3  = (S^1,\ldots,S^i,V^3)
+\end{eqnarray*}
+This can lead to a branching in the verification process. 
+
+Scenario merging (Section \ref{sec:merging scenarios}) can be used in such a case to alleviate the computational burden, although the verification is no longer sound in that case (i.e. it might give that the scenario is correct when it is not). 
+That's because the merged scenario contains a subset of each component scenario's agents, and a subset of each component scenario's constraints.
+ 
+\section{Scenario interruption}
+\label{sec:scenario interruption}
+In our definition of a correct scenario, we required that the vehicle's goal not change (Section \ref{sec:scenario correctness}).
+In a journey, the car's controller might decide to change goals based on the environmental changes. 
+E.g. from ``Get to Spruce St within 5mins'' to ``Cross intersection within 1min'' to ``Change lanes within 3secs'' back to ``Cross intersection within 1min''.
+
+During the scenario verification process, if the vehicle changes goals, which can be detected by a change in the value of $g_{ego}$, the verification tool searches the library of pre-verified scenarios for scenarios that have that same goal. 
+For each one of those scenarios, it then verifies whether the hand-off from the current scenario is correct, according to Def.~\ref{def:correct hand-off}.
+In such a case, if a scenario hands off to a different scenario, the original scenario `dies' but verification is not failed.
+The details are left out.
+
+\section{Varying the number of agents in a scenario}
+\label{sec:varying nb agents}
+Naturally, we are interested in verifying a scenario with a variable number of agents.
+E.g. for a 4-way intersection with 2 lanes in each way, we wish to verify that the ego vehicle can negotiate the intersection with 0 and up to $7n$ other vehicles for some $n$ (there is a total of 8 lanes, and the ego vehicle occupies one of them, and $n$ gives the number of vehicles in each lane).
+
+Ideally, the verification method for that scenario will allow us to handle the different numbers of vehicles in one verification run. 
+For example, this is the case for an Intersection scenario where cars are modeled via occupancy bits.
+Otherwise, we have to repeat the verification for each number of vehicles.
+If the scenario is non-deterministic then we might be able to model the varying number of vehicles using non-determinism.
+Details will depend on the formalism chosen to model and verify the scenario.
+
+
+
