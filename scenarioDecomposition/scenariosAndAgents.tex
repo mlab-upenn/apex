@@ -20,7 +20,7 @@ When we just speak of an agent, we mean an agent instance with parameters specif
 An agent $a$ is identified with its state $x_a$. 
 The state belongs to some set $X_a$. 
 
-For agents $x_a$ of types \texttt{vehicle} and \texttt{pedestrian}, 
+For agents $a$ of types \texttt{vehicle} and \texttt{pedestrian}, 
 \begin{itemize}
 	\item the state $x_a$ always includes a variable $p_a$ that gives the position of the agent in the world.
 	\item \emph{except for the ego vehicle}, all agents share the same state space $X_m$.
@@ -28,7 +28,7 @@ For agents $x_a$ of types \texttt{vehicle} and \texttt{pedestrian},
 
 The ego agent's state $x_{ego}$ also always includes the current goal $g_{ego}$ being pursued by the vehicle (a goal is formally defined below in Def.\ref{def:goal}).
 
-A \emph{trajectory} $x_a(\cdot)$ of an agent gives the evolution of the agent's state as a function of time: $x_a(\cdot): \Re_+ \rightarrow X_a$.
+A \emph{trajectory} $\sttraj_a(\cdot)$ of an agent gives the evolution of the agent's state as a function of time: $\sttraj_a(\cdot): \Re_+ \rightarrow X_a$.
 \end{defn}
 
 The specific formalism used to model the scenario will dictate the sets $X_a$.
@@ -52,7 +52,7 @@ g_{ego}\\
 	$\pgoal$ is an atomic proposition, i.e. a state formula.
 	We call $T$ the \emph{horizon} of the scenario.
 \end{defn}
-In words, the goal always states that, sometime between times 0 and $T$, the proposition $\pgoal$ is satisfied.
+In words, the goal states that, sometime between times 0 and $T$, the proposition $\pgoal$ is satisfied.
 
 Formally, we define a scenario instance as follows. 
 \begin{defn}[Scenario instance]
@@ -73,22 +73,22 @@ Formally, we define a scenario instance as follows.
 	It has the form $\goal := \eventually_{[0,T]} \pgoal$ where $\pgoal$ is an atomic proposition.
 	%
 	\item $Init$ is an \emph{initialization} of the scenario, which defines a valid initial set of states for the agents when the scenario starts. 
-	It is given by $Init = X_{ego}^0 \times \Pi_{a \in \agentInstanceSet} X_{a}^0$, where:
+	It is given by $Init = X_{ego}^0 \times \Pi_{a_i \in \agentInstanceSet} X_{i}^0$, where:
 	\begin{itemize}
-		\item $X_{ego}^0$ is the initial state set $X_{ego}^0 \subset X_{ego}$ of the ego vehicle. Because we want to allow non-determinism and model a range of situations, we allow the initial state of the ego vehicle to be in a set rather than at a fixed value.
-		\item $X_a^0$ are the initial state sets $X_a^0 \subset X_a$ of the other agents (other cars, pedestrians and traffic signs).
+		\item $X_{ego}^0  \subset X_{ego}$ is the initial state set of the ego vehicle. Because we want to allow non-determinism and model a range of situations, we allow the initial state of the ego vehicle to be in a set rather than at a fixed value.
+		\item $X_i^0  \subset X_{a_i}$ are the initial state sets of the other agents (other cars, pedestrians and traffic signs).
 	\end{itemize}
 	% 
 \end{itemize}
-The \emph{state of a scenario} $x_S$ simply refers to the combined states of all agents in the scenario
-	\[x_S = (x_{ego}, x_{a_1},\ldots,x_{a_{|\agentInstanceSet|}})\]
+The \emph{state of a scenario} $x$ simply refers to the combined states of all agents in the scenario
+	\[x = (x_{ego}, x_1,\ldots,x_{|\agentInstanceSet|})\]
 The \emph{scenario system} $\Sys_S$ is the system whose state is $x_S$, evolving according to the semantics of the respective agents.
-The \emph{scenario state space} is then $X_S = X_{ego} \times \Pi_{a \in \agentInstanceSet} X_{a}$.
-For convenience, we also define the \emph{other agents state space} $X_A = \Pi_{a \in \agentInstanceSet} X_{a}$.
+The \emph{scenario state space} is then $X = X_{ego} \times \Pi_{a_i \in \agentInstanceSet} X_{a_i}$.
+For convenience, we also define the \emph{other agents state space} $X_A = \Pi_{a_i \in \agentInstanceSet} X_{a_i}$.
 \end{defn}
 
-
 Naturally, the goal $\goal$ and constraints $\constraints$ are properties of the ego vehicle's behavior, not the other agents' (although the state of the other agents may appear in these formulas).
+Note we assume that the set $Init$ is separable, i.e. it is a product of sets.
 
 \begin{defn}[Journey]
 Let $\Sc = \{s_0,s_1,\ldots,s_{N-1}\}$ be a set of scenario instances. 
@@ -121,7 +121,7 @@ If $\Sys_S \models \goal$, where $\goal$ is given by $\eventually_{[0,T]} \pgoal
 We call this the satisfaction time of $x$.
 
 Note we do not allow the car to change goals mid-scenario (condition \ref{samegoal}). 
-This is an assumption that will be relaxed later, but for now, and to provide a gentle introduction, we make this assumption.
+This is an assumption that will be relaxed later.
 
 \subsection{Tools for scenario verification}
 In this sub-section, we give a list of (mostly formal) verification approaches that can be applicable to the verification of one scenario, i.e. that can verify the properties \ref{init}-\ref{satisfaction} above.
@@ -160,7 +160,7 @@ For the first issue (new vehicles), it is logical to consider that new vehicles 
 This is captured in condition \ref{hand-off:initialization} of Def. \ref{def:correct hand-off}.
 
 The second issue (what to do with the vehicles from the first scenario) is a bit more subtle. 
-We define a \emph{relevance window}, which is a subset of the agents' state-space $X_A$.
+We define a \emph{relevance window}, which is a subset of the mobile agents' state-space $X_m$.
 Intuitively, an agent whose state is in the relevance window can still affect the execution of the scenario and its ultimate correctness.
 Any $S^1$ agent that happens to be within the relevance window at the hand-off time must be accounted for in $\agentInstanceSet^2$. 
 This is captured in condition \ref{hand-off:agent survival} of Def. \ref{def:correct hand-off}. 
@@ -171,6 +171,7 @@ This is captured in condition \ref{hand-off:agent survival} of Def. \ref{def:cor
 	and let $x_{ego} \in X_{ego}$.
 	Recall that all mobile agents share the same state space $X_m$.
 	A \emph{relevance window from $S^1$ to $S^2$ around $x_{ego}$}, $W(x_{ego}, S^1,S^2)$,  is a subset of the mobile agent state space $X_m$: $W(x_{ego}, S^1,S^2) \subset X_m$.
+	We call agents $a \in W(x_{ego}, S^1,S^2)$ \emph{surviving agents}.
 \end{defn}
 It is hard to specify a relevance window: a proper specification will need to take into account the particular scenarios, the behavior of the other agents, and the goal of the current scenario.
 When in doubt, one should over-approximate it to maintain soundness of the verification procedure.
@@ -180,60 +181,102 @@ When in doubt, one should over-approximate it to maintain soundness of the verif
 Consider two scenario instances $S^1 = (\agentInstanceSet^1, Road^1, Init^1, \constraints^1, \goal^1)$
 and
 $S^2 = (\agentInstanceSet^2,Road^2, Init^2, \constraints^2, \goal^2)$.
-For an $S^1$ system trajectory $x^1$, let $t_{x^1} = t_{sat}^{S^1}(x^1)$ be the satisfaction time of $x^1$ and let $x_h = x^1_{ego}(t_{x^1})$.
+For an $S^1$ system trajectory $\sttraj^1$, let $t_{\sttraj^1} = t_{sat}^{S^1}(\sttraj^1)$ be the satisfaction time of $\sttraj^1$ and let $x_h = \sttraj^1_{ego}(t_{\sttraj^1})$.
 The hand-off from $S^1$ to $S^2$ is correct if all the following hold:
 \begin{enumerate}
-	\item $Road^1 \cap Road^2 \neq \emptyset$
+	\item $Road^2$ can be appended to $Road^1$.
 	\label{hand-off:roads}
 	%
-	\item for all $S^1$ trajectories $x^1$, let $W(x_h,S^1,S^2)$ be the relevance window around the ego agent at time $t_{x^1}$. Then for all $a \in \agentInstanceSet^1$ such that $x^1_a(t_{x^1}) \in W(x_h,S^1,S^2)$, $a \in \agentInstanceSet^2$.
+	\item For all $S^1$ trajectories $\sttraj^1$, $\sttraj^1_{ego}(t_{x^1}) \in Init^2.X_{ego}^0$.
+	\label{hand-off:ego initialization}
+	%
+	\item for all $S^1$ trajectories $\sttraj^1$, let $W(x_h,S^1,S^2)$ be the relevance window around the ego agent at time $t_{x^1}$. Then for all $a \in \agentInstanceSet^1$ such that $\sttraj^1_a(t_{\sttraj^1}) \in W(x_h,S^1,S^2)$, $a \in \agentInstanceSet^2$.
 	\label{hand-off:agent survival}
 	%
-	\item for all $S^1$ trajectories $x^1$, for all $a \in \agentInstanceSet^1$ such that $x^1_a(t_{x^1}) \in W(x_h,S^1,S^2)$, $x^1_a(t_{x^1}) \in Init^2.X_a^0$
+	\item for all $S^1$ trajectories $\sttraj^1$, for all $a \in \agentInstanceSet^1$ such that $a \in A^2$, $\sttraj^1_a(t_{\sttraj^1}) \in Init^2.X_a^0$
 	\label{hand-off:initialization}
-	%
-	\item for all $S^1$ trajectories $x$, the controller of the ego vehicle issues the new goal equal to $\goal^2: g_{ego}(t_x) = \goal^2$.
-	\label{hand-off:new goal}
 \end{enumerate}
 
 \end{defn}
-In the above three equations, note that the hand-off conditions are required to be satisfied exactly at the time that the scenario is satisfied.
+Note that the hand-off conditions are required to be satisfied exactly at the time that the scenario is satisfied.
 This guarantees that there is no time gap during which non-verified behavior can occur.
 
-
+The hand-off conditions say nothing about the new goal $g_{ego}(t_{\sttraj})$ chosen by the EV.
+The hand-off captures whether the EV (and other agents), when they complete the goal of $S^1$, satisfy the conditions under which $S^2$ was verified as correct. 
+They do not check that the EV indeed wants to pursue the goal of $S^2$ next. They only guarantee that, should that be its goal, the EV can achieve it.
 
 \section{Verifying a scenario hand-off}
 \label{sec:verifying hand-off}
 Given two pre-verified scenarios $S^1$ and $S^2$, how do we verify that their composition is correct according to Def. \ref{def:correct hand-off}?
 In this section we give formal expressions for the conditions of Section \ref{sec:scenarion hand-off}.
 
-We consider that the agent identifier $a$ is part of the agent state $x_a$, so we can write state propositions that use the identifier.
-Recall that the goal $\goal = \eventually_{[0,T]}\pgoal$.
+The birth and death of other agents will complicate matters significantly, since the state vector of our system will have to grow and shrink accordingly.
+Recall that the goal $\goal = \eventually_{[0,T]}\pgoal$, and that $x = [x_{ego}, x_1, \ldots,x_{|A|}]$ is the state vector of the scenario system (for a given scenario), with $x_i$ being the state of the $i^{th}$ agent $a_i$.
 
-Condition \ref{hand-off:roads} is checked geometrically, and the details depend on the road representation as a geometric planar object.
+\subsection{Verification via Model Checking}
+We introduce some further notation.
+Define the following atomic propositions:
+\[\forall a_i \in A, w_i \defeq x_i \in W(x_{ego}, S^1,S^2)\]
+expresses that agent $a$ is in the relevance window around some state $x_{ego}$.
+\[\forall a_i,a_k \in A, v_{ik} \defeq x_i \in Init^2.X_k^0\]
+expresses that agent $a_i$'s state is in the $k^{th}$ initial set $X_k^0$ of $S^2$.
 
-Condition \ref{hand-off:agent survival} can be expressed as follows:
-recall that $x_S = (x_{ego},x_{a_1},\ldots,x_{a_n})$ is the state of the system. 
-For each agent $a \in \agentInstanceSet^1$ define the atomic proposition $w_{a} := x_{a} \in W(x_{ego},S^1,S^2)$.
-Then Condition \ref{hand-off:agent survival} can be formulated as follows: 
+Condition \ref{hand-off:roads} is checked geometrically, and the details depend on the road representation as a planar object.
+
+Condition \ref{hand-off:ego initialization} can be expressed as follows:
 \begin{equation}
-\label{eq:formal hand-off:agent survival}
-\eventually_{[0,T]} \pgoal \land \always \left(\bigwedge_{a\in \agentInstanceSet^1} ((\pgoal \land  w_a) \implies a \in \agentInstanceSet^2 )\right)
+\label{eq:formal hand-off:ego initialization}
+\eventually_{[0,T]} \pgoal \land \always \left(\pgoal \implies x_{ego} \in Init^2.X_{ego}^0)\right)
 \end{equation}
 
-Condition \ref{hand-off:initialization} captures that the $S^1$ agents in the relevance window must satisfy the initialization conditions for $S^2$.
+Conditions \ref{hand-off:agent survival} and \ref{hand-off:initialization} capture that the $S^1$ agents in the relevance window must satisfy the initialization conditions for $S^2$.
+This condition needs to be carefully examined.
+First, we only care about agents in the relevance windows (so-called surviving agents). 
+Non-surviving agents are irrelevant to the new scenario. 
+Proposition $w_i$ helps us express this aspect.
+Secondly, \emph{agents have no identity when they cross over from one scenario to the next}. 
+That is, it is not necessary that surviving agent, say, $a_1$, in $A^1$ play the role of agent $a_1$ in $A^2$. 
+What matters is that $a_1$ play \emph{some agent's role} in $A^2$. 
+This is satisfied if $a_1$ is in \emph{some initial set} $Init^2.X_k^0$, and \eqref{eq:formal hand-off:initialization 1} captures that.
+Thus $a_1$ \emph{becomes} $a_k$ in $S^2$.
+Moreover, if $x_1 \in Init^2.X_k^0$, then no other surviving agent can claim $Init^2.X_k^0$ as its initial set. 
+This is captured by \eqref{eq:formal hand-off:initialization 2}.
 
 This can be formally expressed as follows:
-\begin{equation}
+\begin{eqnarray}
 \label{eq:formal hand-off:initialization}
-\eventually_{[0,T]} \pgoal \land \always \left(\bigwedge_{a\in \agentInstanceSet^1} ((\pgoal \land  w_a) \implies x_a \in Init^2.X_a^0 )\right)
-\end{equation}
-Note that \eqref{eq:formal hand-off:agent survival} and \eqref{eq:formal hand-off:initialization} can be combined.
+\eventually_{[0,T]} \pgoal \land \always \bigwedge_{i \in [|\agentInstanceSet^1|]} \left( (\pgoal \land  w_i) \implies \vee_{k} v_{ik} \right)
+\label{eq:formal hand-off:initialization 1}
+\\
+\eventually_{[0,T]} \pgoal \land \always \bigwedge_{i \in [|\agentInstanceSet^1|], k \in [|\agentInstanceSet^2|]} \left( (\pgoal \land  w_i \land v_{ik}) \implies \wedge_{j \neq k} \neg v_{ik} \right)
+\label{eq:formal hand-off:initialization 2}
+\end{eqnarray}
 
-Condition \ref{hand-off:new goal} can be expressed as
-\begin{equation}
-\eventually_{[0,T]} \pgoal \land \always(\pgoal \implies g_{ego} = \goal^2)
-\end{equation}
+If there are no surviving agents (relevance windows are empty) then the World Maker must provide the new scenario's agents\footnote{The World Maker is the software entity generating the scenarios.}.
+In this case,  $w_i = FALSE$ and equations \eqref{eq:formal hand-off:initialization 1} and \eqref{eq:formal hand-off:initialization 2} simplify to $\goal$.
+
+The above formulae are in Metric Temporal Logic (MTL) because of the time bound on the Eventually operator. 
+If we abandon the time bound, they reduce to LTL formulae.
+
+\subsection{Verification via set operations}
+An alternative to using Model Checking, which potentially reduces runtime, makes use of the fact that the goal $\pgoal$ and propositions $w_i, v_{ik}$ all can be mapped to subsets of the state space $X = X_{ego} \times X_A = X_{ego} \times X_m^{|A|}$.
+Specifically, to every atomic proposition $p$, the map $O:AP \rightarrow 2^X$ associates the set $O(p)$ of states that satisfy $p$: $O(p) = \{x \models p\}$.
+For every set of indices $I \subset [|A|]$, define the subset of $O(\pgoal)$
+\[C_I = \{x \in O(\pgoal) \sut x_i \in W(x_{ego},S^1,S^2) \textrm{ iff } i \in I\}\]
+Then the sets $C_I$ partition $O(\pgoal)$: $O(\pgoal) = \cup_{I \in 2^{[|A|]}}C_I, C_I \cap C_{I'} = \emptyset$.
+We ignore the empty $C_I$'s.
+$C_I$ is the set of states satisfying the goal such that agents indexed by $I$ survive. 
+For each $x \in C_I$, we simply check whether the agents $x_i,i\in I$ are in some initial sets of $Init^2$.
+Finally, let $C_I\lceil I$ be the projection of $C_I$ onto $X_{ego} \times X_m^{|I|}$.
+Then the hand-off is correct if
+\begin{eqnarray}
+|I| \leq |A^2| 
+\\
+C_I \lceil I \cap Init^2 \neq \emptyset \textrm{ modulo re-arrangement of agents' order in }x_A\lceil I
+\end{eqnarray}
+
+Evaluating these equations requires set operations, which do not require any simulation or model checking, and thus are very attractive from a theoretical point of view.
+In practice, the sets $C_I$ are likely to have complicated descriptions, and whether we can perform the necessary set operations is open to question and depends on the specific scenario and sets.
 
 \section{Building a pre-verified journey}
 \label{sec:detecting hand-off}
@@ -251,13 +294,21 @@ The verification tool has access to a library $L$ of pre-verified scenarios:
 $L = \{V^1,V^2,\ldots,V^k\}$.
 The verification tool will need to identify the starting scenario out of those in $L$. 
 Let that be $S^1$.
-Then iteratively, for every $i \geq 1$, the tool will identify scenarios $S \in L$ such that the hand-off from $S^i$ to $S$ is correct per Def \ref{def:correct hand-off}.
+Then iteratively, for every $i \geq 1$, the tool will identify scenarios $S \in L$ such that 
+\begin{itemize}
+	\item the next road segment matches the road segment of $S$,
+	\item the hand-off from $S^i$ to $S$ is correct per Def \ref{def:correct hand-off},
+	\item the laws in force on the next road segment match the laws of $S$,
+	\item and the new goal of the vehicle matches the goal of $S$.
+\end{itemize}
 Set $S^{i+1} = S$.
-The process continues until $DEST$ is reached, i.e. until the tool can hand-off to a scenario $S^t$ such that $\goal^t = \eventually_{[0,T_t](p_{ego} \in Dest)}$.
-This gives the verified journey $M = (S^1,S^2,\ldots,S^t)$.
+The process continues until we reach a scenario $S^t$ such that $\goal^{S^t} \implies p_{ego} \in DEST$.
+This gives the verified journey $J = (S^1,S^2,\ldots,S^t)$.
 
-Note that the problem of journey generation and verification coverage will be the subject of future research.
-
+How do we know, during verification, what is the next goal of the EV?
+We assume that once the goal of a scenario is achieved, and regardless of how it was achieved, the EV will always have the same next goal. 
+I.e., regardless of trajectory, $g_{ego}(t_\sttraj) = $ constant.
+Then to get the new goal, we simply simulate the system and see what new value is given to $g_{ego}$.
 \subsection{Multiple matches}
 Let $S^i$ be the current scenario in a journey verification.
 It can happen that more than one scenario provide a correct hand-off from $S^i$, say $V^1,V^2,V^3$.
